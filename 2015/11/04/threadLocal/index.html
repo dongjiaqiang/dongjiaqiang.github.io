@@ -4,35 +4,35 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Dong&#39;s Blog</title>
+    <title>线程封闭性与ThreadLocal类 | Dong&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Geek Dong">
     
 
     
-    <meta name="description" content="title:线程封闭性与ThreadLocal类线程封闭###概念
-   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
-###实现手段
-
-Ad-hoc线程封闭  由程序实现">
+    <meta name="description" content="线程封闭概念   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
+实现手段
+Ad-hoc线程封闭  由程序实现来维护线程的封闭性
+栈封闭  只有局部变量才能访问对象
+Thre">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Dong's Blog">
+<meta property="og:title" content="线程封闭性与ThreadLocal类">
 <meta property="og:url" content="http://www.gohell.com.cn/2015/11/04/threadLocal/index.html">
 <meta property="og:site_name" content="Dong's Blog">
-<meta property="og:description" content="title:线程封闭性与ThreadLocal类线程封闭###概念
-   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
-###实现手段
-
-Ad-hoc线程封闭  由程序实现">
-<meta property="og:updated_time" content="2015-11-04T15:02:05.000Z">
+<meta property="og:description" content="线程封闭概念   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
+实现手段
+Ad-hoc线程封闭  由程序实现来维护线程的封闭性
+栈封闭  只有局部变量才能访问对象
+Thre">
+<meta property="og:updated_time" content="2015-11-04T15:09:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Dong's Blog">
-<meta name="twitter:description" content="title:线程封闭性与ThreadLocal类线程封闭###概念
-   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
-###实现手段
-
-Ad-hoc线程封闭  由程序实现">
+<meta name="twitter:title" content="线程封闭性与ThreadLocal类">
+<meta name="twitter:description" content="线程封闭概念   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
+实现手段
+Ad-hoc线程封闭  由程序实现来维护线程的封闭性
+栈封闭  只有局部变量才能访问对象
+Thre">
 
     
     <link rel="alternative" href="/atom.xml" title="Dong&#39;s Blog" type="application/atom+xml">
@@ -92,7 +92,7 @@ Ad-hoc线程封闭  由程序实现">
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/04/threadLocal/" title="" itemprop="url"></a>
+      <a href="/2015/11/04/threadLocal/" title="线程封闭性与ThreadLocal类" itemprop="url">线程封闭性与ThreadLocal类</a>
   </h1>
   <p class="article-author">By
        
@@ -108,24 +108,19 @@ Ad-hoc线程封闭  由程序实现">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#title:线程封闭性与ThreadLocal类"><span class="toc-number">1.</span> <span class="toc-text">title:线程封闭性与ThreadLocal类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程封闭"><span class="toc-number">2.</span> <span class="toc-text">线程封闭</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程封闭"><span class="toc-number">1.</span> <span class="toc-text">线程封闭</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现手段"><span class="toc-number">1.2.</span> <span class="toc-text">实现手段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadLocal类"><span class="toc-number">2.</span> <span class="toc-text">ThreadLocal类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ThreadLocal类的用法"><span class="toc-number">2.1.</span> <span class="toc-text">ThreadLocal类的用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">3.</span> <span class="toc-text">引用</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="title:线程封闭性与ThreadLocal类">title:线程封闭性与ThreadLocal类</h2><h2 id="线程封闭">线程封闭</h2><p>###概念</p>
-<p>   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.</p>
-<p>###实现手段</p>
-<ul>
+		<h2 id="线程封闭">线程封闭</h2><h3 id="概念">概念</h3><p>   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.</p>
+<h3 id="实现手段">实现手段</h3><ul>
 <li>Ad-hoc线程封闭  由程序实现来维护线程的封闭性</li>
 <li>栈封闭  只有局部变量才能访问对象</li>
 <li>ThreadLocal类  </li>
 </ul>
-<p>##ThreadLocal类</p>
-<p>   可以把ThreadLocal类是一个泛型类,可以把这个类类比为一个Map<thread,t>,每个Thread都关联一个类型为T的变量,每个线程访问这个变量都只能访问到属于自己的那个独立的变量副本.但是这些值是保存在各个线程中的,线程终止时这些值就会被垃圾回收.</thread,t></p>
-<p>###ThreadLocal类的用法</p>
-   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Integer&gt; integerThreadLocal;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WorkThread</span><span class="params">(ThreadLocal&lt;Integer&gt; integerThreadLocal)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.integerThreadLocal = integerThreadLocal;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(integerThreadLocal.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ThreadLocal&lt;Integer&gt; integerThreadLocal = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> AtomicInteger atomicInteger=<span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Integer <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> atomicInteger.getAndIncrement();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> WorkThread(integerThreadLocal)).start();</span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> WorkThread(integerThreadLocal)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>##引用</p>
-  
+<h2 id="ThreadLocal类">ThreadLocal类</h2><p>   可以把ThreadLocal类是一个泛型类,可以把这个类类比为一个Map<thread,t>,每个Thread都关联一个类型为T的变量,每个线程访问这个变量都只能访问到属于自己的那个独立的变量副本.但是这些值是保存在各个线程中的,线程终止时这些值就会被垃圾回收.</thread,t></p>
+<h3 id="ThreadLocal类的用法">ThreadLocal类的用法</h3>   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Integer&gt; integerThreadLocal;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WorkThread</span><span class="params">(ThreadLocal&lt;Integer&gt; integerThreadLocal)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.integerThreadLocal = integerThreadLocal;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(integerThreadLocal.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    ThreadLocal&lt;Integer&gt; integerThreadLocal = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> AtomicInteger atomicInteger=<span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Integer <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> atomicInteger.getAndIncrement();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> WorkThread(integerThreadLocal)).start();</span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> WorkThread(integerThreadLocal)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="引用">引用</h2>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -137,7 +132,7 @@ Ad-hoc线程封闭  由程序实现">
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://www.gohell.com.cn/2015/11/04/threadLocal/" data-title="Dong&#39;s Blog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://www.gohell.com.cn/2015/11/04/threadLocal/" data-title="线程封闭性与ThreadLocal类 | Dong&#39;s Blog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -169,7 +164,7 @@ Ad-hoc线程封闭  由程序实现">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#title:线程封闭性与ThreadLocal类"><span class="toc-number">1.</span> <span class="toc-text">title:线程封闭性与ThreadLocal类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程封闭"><span class="toc-number">2.</span> <span class="toc-text">线程封闭</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程封闭"><span class="toc-number">1.</span> <span class="toc-text">线程封闭</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现手段"><span class="toc-number">1.2.</span> <span class="toc-text">实现手段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ThreadLocal类"><span class="toc-number">2.</span> <span class="toc-text">ThreadLocal类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ThreadLocal类的用法"><span class="toc-number">2.1.</span> <span class="toc-text">ThreadLocal类的用法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">3.</span> <span class="toc-text">引用</span></a></li></ol>
  
   </div>
 
