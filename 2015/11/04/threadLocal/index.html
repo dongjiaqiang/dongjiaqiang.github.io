@@ -33,7 +33,7 @@ Thre">
 <meta property="og:image" content="http://www.forkosh.com/mathtex.cgi?{log}_2n">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/cleanSomeSlot.png">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/replaceStaleEntry.png">
-<meta property="og:updated_time" content="2015-11-25T15:32:51.000Z">
+<meta property="og:updated_time" content="2015-11-25T15:52:46.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程封闭性与ThreadLocal类">
 <meta name="twitter:description" content="线程封闭概念   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.
@@ -192,7 +192,7 @@ Thre">
 <p>  下图展现了设置值的流程<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/set_produce_1.png" alt="Set Produce"></p>
 <p>  跟set方法在遇到过期引用时会调用replaceStaleEntry方法,而该方法又依赖于cleanSomeSlot方法,所以这里先分析cleanSomeSlot方法.cleanSomeSlot方法需要两个int类型的参数,一个为index,方法将从index位置开始向前遍历寻找过期引用,一个为n,方法在遍历过程中如果未遇见过期引用将遍历<img src="http://www.forkosh.com/mathtex.cgi?{log}_2n">个引用后结束并返回false.如果遇见过期引用,则从该位置调用explungeStaleEntry方法并从返回的位置继续重新遍历<img src="http://www.forkosh.com/mathtex.cgi?{log}_2n">个引用,如果在此期间没有遇到过期引用则结束并返回true.</p>
 <p>  下图展现了cleanSomeSlot方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/cleanSomeSlot.png" alt="cleanSomeSlot"></p>
-<p>  介绍完cleanSomeSlot方法后在介绍一下replaceStaleEntry方法的工作机制,这是设置值过程如果遇到过期引用会调用的方法.方法首先从传入的过期引用位置向前遍历查找是否有过期引用并且记录在遇到null位置时最后一次出现过期引用的位置.之后从过期引用位置向后遍历直到遇到null位置.如果在这个过程中没有遇到entry的键值为目标threadLocal实例,则更新staleSlot位置为</p>
+<p>  介绍完cleanSomeSlot方法后在介绍一下replaceStaleEntry方法的工作机制,这是设置值过程如果遇到过期引用会调用的方法.</p>
 <p>  下图展现了replaceStaleEntry方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/replaceStaleEntry.png" alt="replaceStaleEntry"></p>
 <h3 id="移除值的流程">移除值的流程</h3><h3 id="引用">引用</h3><pre><code>[<span class="link_label">!Hash table</span>](<span class="link_url">https://en.wikipedia.org/wiki/Hash_table</span>)
 </code></pre>  
