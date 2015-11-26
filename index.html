@@ -266,7 +266,9 @@
 <p>  下图展现了cleanSomeSlot方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/cleanSomeSlot.png" alt="cleanSomeSlot"></p>
 <p>  介绍完cleanSomeSlot方法后在介绍一下replaceStaleEntry方法的工作机制,这是设置值过程如果遇到过期引用会调用的方法.</p>
 <p>  下图展现了replaceStaleEntry方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/replaceStaleEntry.png" alt="replaceStaleEntry"></p>
-<h3 id="移除值的流程">移除值的流程</h3><h3 id="引用">引用</h3><pre><code>[<span class="link_label">!Hash table</span>](<span class="link_url">https://en.wikipedia.org/wiki/Hash_table</span>)
+<h3 id="移除值的流程">移除值的流程</h3><p>   移除值的流程对应到ThreadLocal.remove方法,该方法将移除线程内部threadLocalMap域中保存的该ThreadLocal实例与其映射的值的对应关系.</p>
+<p>   下图展现了设置值的流程<br>   <img src="http://7xonn1.com1.z0.glb.clouddn.com/remove_produce.png" alt="remove"></p>
+<h2 id="引用">引用</h2><pre><code>[<span class="link_label">Hash table</span>](<span class="link_url">https://en.wikipedia.org/wiki/Hash_table</span>)
 </code></pre>
         
         
