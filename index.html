@@ -269,7 +269,7 @@
 <p>  map中设置保存的entry实例数的阈值为三分之二大小的map长度,如果该entry实例数量超过阈值将调用rehash方法对map进行扩展.<br>  在rehash运行流程中,将首先遍历这个map,对每个entry都调用expungeStaleEntry方法,以清除全部的过期引用.如果运行结束entry实例还是超过了四分之三大小的阈值.则对map进行扩展.扩展过程是创建一个新的map实例,这个新的map实例的大小为旧的map实例大小的两倍.并将旧map实例中所有的entry实例重新映射到新的map实例上,并设置新的阈值.</p>
 <p>  下图展现了rehash方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/rehash.png?imageView/2/w/619/q/90" alt="rehash"></p>
 <h3 id="移除值的流程">移除值的流程</h3><p>   移除值的流程对应到ThreadLocal.remove方法,该方法将移除线程内部threadLocalMap域中保存的该ThreadLocal实例与其映射的值的对应关系.</p>
-<p>   下图展现了设置值的流程<br>   <img src="http://7xonn1.com1.z0.glb.clouddn.com/remove_produce.png?imageView/2/w/619/q/90" alt="remove"></p>
+<p>   下图展现了移除值的流程<br>   <img src="http://7xonn1.com1.z0.glb.clouddn.com/remove_produce.png?imageView/2/w/619/q/90" alt="Remove Produce"></p>
 
         
         
