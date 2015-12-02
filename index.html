@@ -152,56 +152,7 @@
 <li>CopyOnWriteArraySet 用于替代同步的Set</li>
 </ul>
 <h2 id="锁分段">锁分段</h2><p>  将一组独立对象上的锁进行分解,这种情况称为锁分段(Lock Striping).例如,在ConcurrentHashMap中,使用了一个包含16个锁的数组,每个锁保护所有散列桶的1/16.假设散列函数具有合理的分布性,并且关键字能够实现均匀地分布,那么大约能把对于锁的请求减少到原来的1/16.</p>
-<h3 id="使用锁分段技术的散列Map">使用锁分段技术的散列Map</h3><p>  ```java<br>  @ThreadSafe<br>  public class StripedMap {<br>        //同步策略:buckets[n]由locks[n%N_LOCKS]来保护<br>        private static final int N_LOCKS=16;<br>        private final Node[] buckets;<br>        private final Object[] locks;</p>
-<pre><code><span class="keyword">private</span> <span class="keyword">static</span> class Node { ... }
-
-<span class="keyword">public</span> StripedMap(<span class="built_in">int</span> numBuckets){
-    buckets=<span class="keyword">new</span> Node[numBuckets];
-    locks=<span class="keyword">new</span> <span class="keyword">Object</span>[N_LOCKS];
-    <span class="keyword">for</span>(<span class="built_in">int</span> i=<span class="number">0</span>;i&lt;N_LOCKS;i++)
-          locks[i]=<span class="keyword">new</span> <span class="keyword">Object</span>();
-}
-
-<span class="keyword">private</span> <span class="keyword">final</span> <span class="built_in">int</span> hash(<span class="keyword">Object</span> <span class="variable">key</span>){
-    <span class="keyword">return</span> Math.<span class="built_in">abs</span>(<span class="variable">key</span>.hashCode()%buckets.length);
-}
-
-<span class="keyword">public</span> <span class="keyword">Object</span> <span class="built_in">get</span>(<span class="keyword">Object</span> <span class="variable">key</span>){
-    <span class="built_in">int</span> hash=hash(<span class="variable">key</span>);
-    <span class="keyword">synchronized</span>(locks[hash%N_LOCKS]){
-        <span class="keyword">for</span>(Node m=buckets[hash];m!=<span class="keyword">null</span>;m=m.next)
-                  <span class="keyword">if</span>(m.<span class="variable">key</span>.equals(<span class="variable">key</span>))
-                         <span class="keyword">return</span> m.value;
-    }
-    <span class="keyword">return</span> <span class="keyword">null</span>;
-}
-
-<span class="keyword">public</span> <span class="keyword">void</span> <span class="built_in">clear</span>(){
-    <span class="keyword">for</span>(<span class="built_in">int</span> i=<span class="number">0</span>;i&lt;buckets.length;i++){
-        <span class="keyword">synchronized</span>(locks[i%N_LOCKS]){
-            buckets[i]=<span class="keyword">null</span>;
-        }
-    }
-}
-
-<span class="keyword">public</span> <span class="keyword">void</span> put(<span class="keyword">Object</span> <span class="variable">key</span>,<span class="keyword">Object</span> value){
-    <span class="built_in">int</span> hash=hash(<span class="variable">key</span>);
-    <span class="keyword">synchronized</span>(locks[hash%N_LOCKS]){
-        <span class="keyword">if</span>(bucket[hash]==<span class="keyword">null</span>){
-            buckets[hash]=<span class="keyword">new</span> Node(<span class="variable">key</span>,value);
-            <span class="keyword">return</span>;
-        }
-        Node m=buckets[hash];
-        <span class="keyword">for</span>(Node n=m.next;n!=<span class="keyword">null</span>;n=n.next,m=m.next)
-                <span class="keyword">if</span>(m.<span class="variable">key</span>.equals(<span class="variable">key</span>)){
-                    m.value=value;
-                    <span class="keyword">return</span>;
-                }
-        m.next=<span class="keyword">new</span> Node(<span class="variable">key</span>,value);                 
-    }
-}
-......
-</code></pre><p>  }</p>
+<h3 id="使用锁分段技术的散列Map">使用锁分段技术的散列Map</h3>  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@ThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StripedMap</span> </span>&#123;</span><br><span class="line">      <span class="comment">//同步策略:buckets[n]由locks[n%N_LOCKS]来保护</span></span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> N_LOCKS=<span class="number">16</span>;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">final</span> Node[] buckets;</span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">final</span> Object[] locks;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="title">StripedMap</span><span class="params">(<span class="keyword">int</span> numBuckets)</span></span>&#123;</span><br><span class="line">      	buckets=<span class="keyword">new</span> Node[numBuckets];</span><br><span class="line">      	locks=<span class="keyword">new</span> Object[N_LOCKS];</span><br><span class="line">      	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;N_LOCKS;i++)</span><br><span class="line">      	      locks[i]=<span class="keyword">new</span> Object();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">hash</span><span class="params">(Object key)</span></span>&#123;</span><br><span class="line">      	<span class="keyword">return</span> Math.abs(key.hashCode()%buckets.length);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> Object <span class="title">get</span><span class="params">(Object key)</span></span>&#123;</span><br><span class="line">      	<span class="keyword">int</span> hash=hash(key);</span><br><span class="line">      	<span class="keyword">synchronized</span>(locks[hash%N_LOCKS])&#123;</span><br><span class="line">      		<span class="keyword">for</span>(Node m=buckets[hash];m!=<span class="keyword">null</span>;m=m.next)</span><br><span class="line">      		          <span class="keyword">if</span>(m.key.equals(key))</span><br><span class="line">      		                 <span class="keyword">return</span> m.value;</span><br><span class="line">      	&#125;</span><br><span class="line">      	<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span>&#123;</span><br><span class="line">      	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;buckets.length;i++)&#123;</span><br><span class="line">      		<span class="keyword">synchronized</span>(locks[i%N_LOCKS])&#123;</span><br><span class="line">      			buckets[i]=<span class="keyword">null</span>;</span><br><span class="line">      		&#125;</span><br><span class="line">      	&#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(Object key,Object value)</span></span>&#123;</span><br><span class="line">      	<span class="keyword">int</span> hash=hash(key);</span><br><span class="line">      	<span class="keyword">synchronized</span>(locks[hash%N_LOCKS])&#123;</span><br><span class="line">      		<span class="keyword">if</span>(bucket[hash]==<span class="keyword">null</span>)&#123;</span><br><span class="line">      			buckets[hash]=<span class="keyword">new</span> Node(key,value);</span><br><span class="line">      			<span class="keyword">return</span>;</span><br><span class="line">      		&#125;</span><br><span class="line">      		Node m=buckets[hash];</span><br><span class="line">      		<span class="keyword">for</span>(Node n=m.next;n!=<span class="keyword">null</span>;n=n.next,m=m.next)</span><br><span class="line">      		        <span class="keyword">if</span>(m.key.equals(key))&#123;</span><br><span class="line">      		        	m.value=value;</span><br><span class="line">      		        	<span class="keyword">return</span>;</span><br><span class="line">      		        &#125;</span><br><span class="line">      		m.next=<span class="keyword">new</span> Node(key,value);                 </span><br><span class="line">      	&#125;</span><br><span class="line">      &#125;</span><br><span class="line">      ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="ConcurrentHashMap类">ConcurrentHashMap类</h2><p>  ConcurrentHashMap用于替代同步且基于散列的Map,其内部实现采用了锁分段的技术,从而在并发环境下将实现更高的吞吐量.</p>
 
         
