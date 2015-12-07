@@ -263,7 +263,10 @@
 <h3 id="获取值的流程">获取值的流程</h3><p>获取值的流程对应到map的get方法,该方法首先计算传入的键的哈希值,判断其所所对应的segment实例是否存在,不存在直接返回null.如果该segment实例存在,则再通过键的哈希值定位其所在的hashEntry数组的索引位置,并从索引位置开始遍历,遍历过程中如果存在键所对应的节点,则返回其存储的值,否则返回null.整个操作过程无需获取segment上的锁.</p>
 <h3 id="删除值的流程">删除值的流程</h3><p>删除值的流程对应到map的remove方法,该方法接受一个键的值,并计算该键的值对应的segment实例是否存在,不存在直接返回null,否则获取对应的segment实例并等待获取其上的锁,获取锁后,计算出该键所在的hashEntry数组的索引位置,并在索引位置进行查找,查找到返回旧值并删除该键值对,查找不到直接返回,最后释放锁结束调用.</p>
 <p>下图展现了删除值的流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/remove_map.png" alt="Remove Produce"></p>
-<h2 id="CopyOnWriteArrayList类">CopyOnWriteArrayList类</h2><h2 id="引用">引用</h2><p><a href="http://www.docjar.com/docs/api/sun/misc/Unsafe.html" target="_blank" rel="external">sun.misc.Unsafe类</a></p>
+<p>###获取容器状态的函数</p>
+<p>获取容器状态的函数包括判空函数isEmpty()和获取容器长度的函数size().由于判空函数需要遍历所有segment实例,判断各个segment实例上的键值对数量,并且在遍历各个segment实例是没有获取其上的锁的,由于在遍历过程中map可能被其他线程并发的修改,所以无法精确的给定某时刻容器是否为空.但isEmpty通过两次遍历来减少在第一次遍历过程中容器可能被并发修改的影响.在上面存储值和删除值的流程中,如果操作成功都会对变量modCount自增一,这个modCount变量将在该方法中发挥作用,isEmpty方法对segment数组进行了两次遍历,在两次遍历过程中如果发现某segment实例的count值为0,则立即返回false.否则比较第一次遍历后各个segment实例的modCount之和与第二次遍历后所求的modCount之和,如果相等,说明在两次遍历过程中,容器没有发生并发修改,所以可以表明遍历过程中容器为空,但是如果不相等,则说明在两次遍历过程中,容器发生并发修改,则表明遍历过程中容器某时刻不为空,返回false.</p>
+<p>下图展现了isEmpty函数的工作机制<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/isEmpty_produce.png" alt="isEmpty Produce"></p>
+<h3 id="其他操作的流程">其他操作的流程</h3><h2 id="CopyOnWriteArrayList类">CopyOnWriteArrayList类</h2><h2 id="引用">引用</h2><p><a href="http://www.docjar.com/docs/api/sun/misc/Unsafe.html" target="_blank" rel="external">sun.misc.Unsafe类</a></p>
 
         
         
