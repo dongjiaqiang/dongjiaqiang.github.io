@@ -268,7 +268,7 @@
 <p>下图展现了isEmpty函数的工作机制<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/isEmpty_produce.png" alt="isEmpty Produce"></p>
 <p>获取容器键值对数量的函数size()也是需要对segment数组进行两次遍历比较两次遍历后modCount之和是否发生修改,如果没有修改,就返回所累加的count值,如果发生改变,说明两次遍历过程中容器被修改,那所求的count值之和可能发生改变,size函数为了能获取比较准确的容器中所含的键值对数量,在发现第二次遍历过程中modCount之和发生改变,会进行多次迭代比较,在3次迭代比较后还是发现modCount之和发生改变,就会等待获取segment实例上所有的锁后,计算segment数组上所有键值对数量并返回结果.所以size函数返回的容器中键值对数量相对还是比较精确的.</p>
 <p>下图展现了size函数的工作流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/size_produce.png?imageView/2/w/619/q/90" alt="size Produce"></p>
-<h3 id="其他操作的流程">其他操作的流程</h3><p>容器中的clear函数主要是将容器进行清空,为了将清空容器,clear函数遍历各个segment实例,获取非空segment实例上的锁,并清空其上所有的键值对然后释放锁.注意,clear函数清空各个segment实例后会将modCount值自增一.容器中的containsValue函数用于判断某个值是否存在于容器中.size函数的思想与size函数一致,在进行3次迭代过程中,如果查找到键值对后立即结束查找返回true,如果没有则比较这次迭代后modCount之和与上次迭代后modCount之和(初始为0)是否发生改变,如果改变,则继续迭代比较,如果没有则返回false.在3次迭代后,如果还是发生改变,则等待获取所有segment实例上的锁后进行操作.</p>
+<h3 id="其他操作的流程">其他操作的流程</h3><p>容器中的clear函数主要是将容器进行清空,为了将清空容器,clear函数遍历各个segment实例,获取非空segment实例上的锁,并清空其上所有的键值对然后释放锁.注意,clear函数清空各个segment实例后会将modCount值自增一.容器中的containsValue函数用于判断某个值是否存在于容器中.containsValue函数的思想与size函数一致,在进行3次迭代过程中,如果查找到键值对后立即结束查找返回true,如果没有则比较这次迭代后modCount之和与上次迭代后modCount之和(初始为0)是否发生改变,如果改变,则继续迭代比较,如果没有则返回false.在3次迭代后,如果还是发生改变,则等待获取所有segment实例上的锁后进行操作.</p>
 <h3 id="散列机制">散列机制</h3><p>ConcurrentHashMap对键进行散列采用了Wang/Jenkins hash算法,该算法应该是目前最好的散列算法.</p>
 <h2 id="CopyOnWriteArrayList类">CopyOnWriteArrayList类</h2><h2 id="引用">引用</h2><p><a href="http://www.docjar.com/docs/api/sun/misc/Unsafe.html" target="_blank" rel="external">sun.misc.Unsafe类</a><br><a href="https://en.wikipedia.org/wiki/Jenkins_hash_function" target="_blank" rel="external">Jenkins Hash Function</a></p>
 
