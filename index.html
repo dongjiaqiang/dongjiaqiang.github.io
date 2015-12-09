@@ -270,7 +270,14 @@
 <p>下图展现了size函数的工作流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/size_produce.png?imageView/2/w/619/q/90" alt="Size Produce"></p>
 <h3 id="其他操作的流程">其他操作的流程</h3><p>容器中的clear函数主要是将容器进行清空,为了将清空容器,clear函数遍历各个segment实例,获取非空segment实例上的锁,并清空其上所有的键值对然后释放锁.注意,clear函数清空各个segment实例后会将modCount值自增一.容器中的containsValue函数用于判断某个值是否存在于容器中.containsValue函数的思想与size函数一致,在进行3次迭代过程中,如果查找到键值对后立即结束查找返回true,如果没有则比较这次迭代后modCount之和与上次迭代后modCount之和(初始为0)是否发生改变,如果改变,则继续迭代比较,如果没有则返回false.在3次迭代后,如果还是发生改变,则等待获取所有segment实例上的锁后进行操作.</p>
 <h3 id="散列机制">散列机制</h3><p>ConcurrentHashMap对键进行散列采用了Wang/Jenkins hash算法,该算法应该是目前最好的散列算法.</p>
-<h2 id="CopyOnWriteArrayList类">CopyOnWriteArrayList类</h2><h2 id="引用">引用</h2><p><a href="http://www.docjar.com/docs/api/sun/misc/Unsafe.html" target="_blank" rel="external">sun.misc.Unsafe类</a><br><a href="https://en.wikipedia.org/wiki/Jenkins_hash_function" target="_blank" rel="external">Jenkins Hash Function</a></p>
+<h2 id="CopyOnWriteArrayList类">CopyOnWriteArrayList类</h2><p>CopyOnWriteArrayList用于替代同步的List,在某些情况下它提供了更好的并发性能,并且在迭代期间无需对容器进行加锁或复制.写入时复制的线程安全性在于只要正确地发布一个事实不可变对象,那么在访问该对象时就无需进一步的同步.在每次修改时,都会创建并重新发布一个新的容器副本,从而实现可变性.写入时复制的容器的迭代器保留一个指向底层基础数组的引用,这个数组当前位于迭代器的起始位置,由于它不会被修改,所以在对其进行同步时只需要确保数组内容的可见性.写入时复制容器返回的迭代器不会抛出ConcurrentModificationException,并且返回的元素与迭代器创建时的元素完全一致,而不必考虑之后修改操作所带来的影响.但是,每当修改容器时都会复制底层数组,这需要一定的开销,特别当容器的规模较大时.仅当迭代操作远远多于修改操作时,才应该使用写入时复制容器.</p>
+<h3 id="获取值的流程-1">获取值的流程</h3><p>容器内部实现比较简单,其内部维护一个volatile类型的Object数组和一个显式锁.获取容器值的流程对应到get方法,该方法通过传入的索引返回底层数组中对应该索引的值.get方法访问数组是无需加锁的,所以多个获取值的操作可以并发访问.</p>
+<p>下图展现了容器内部结构和获取值的流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/copyOnWriteList_get.png?imageView/2/w/619/q/90" alt="Get Produce"></p>
+<h3 id="设置值,删除值,增加值和清空容器的流程">设置值,删除值,增加值和清空容器的流程</h3><p>由于设置值,删除值和清空容器的操作都涉及到对底层数组的修改,所以进行这些操作时,需要获取容器上的锁.这些修改容器的操作,并不是直接在底层数组上进行操作.而是重新创建一个新的数组,并将原数组的内容拷贝到新的数组上,然后对新数组进行设置,增加或删除操作并将容器上对底层数组的引用更新为对新数组的引用,清空容器的操作可以直接将底层数组设为null.底层数组的引用为volatile类型,保证了其他线程对容器修改操作的可见性.</p>
+<p>下图展现了增加值操作的流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/copyOnWriteArrayList_add.png" alt="Add Produce"></p>
+<h3 id="容器的迭代器">容器的迭代器</h3><p>容器的迭代器保留一个直接指向底层基础数组的引用,由于容器不会直接修改底层的数组,所以在对容器进行迭代时不会因为数组被并发修改导致抛出ConcurrentModificationException异常.</p>
+<p>下图展现了容器的迭代器的工作流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/iterator.png" alt="Iterator Produce"></p>
+<h2 id="引用">引用</h2><p><a href="http://www.docjar.com/docs/api/sun/misc/Unsafe.html" target="_blank" rel="external">sun.misc.Unsafe类</a><br><a href="https://en.wikipedia.org/wiki/Jenkins_hash_function" target="_blank" rel="external">Jenkins Hash Function</a></p>
 
         
         
