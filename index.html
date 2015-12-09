@@ -276,7 +276,7 @@
 <h3 id="设置值,删除值,增加值和清空容器的流程">设置值,删除值,增加值和清空容器的流程</h3><p>由于设置值,删除值和清空容器的操作都涉及到对底层数组的修改,所以进行这些操作时,需要获取容器上的锁.这些修改容器的操作,并不是直接在底层数组上进行操作.而是重新创建一个新的数组,并将原数组的内容拷贝到新的数组上,然后对新数组进行设置,增加或删除操作并将容器上对底层数组的引用更新为对新数组的引用,清空容器的操作可以直接将底层数组设为null.底层数组的引用为volatile类型,保证了其他线程对容器修改操作的可见性.</p>
 <p>下图展现了增加值操作的流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/copyOnWriteArrayList_add.png" alt="Add Produce"></p>
 <h3 id="容器的迭代器">容器的迭代器</h3><p>容器的迭代器保留一个直接指向底层基础数组的引用,由于容器不会直接修改底层的数组,所以在对容器进行迭代时不会因为数组被并发修改导致抛出ConcurrentModificationException异常.</p>
-<p>下图展现了容器的迭代器的工作流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/iterator.png" alt="Iterator Produce"></p>
+<p>下图展现了容器的迭代器的工作流程<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/iterator1.png" alt="Iterator Produce"></p>
 <h2 id="引用">引用</h2><p><a href="http://www.docjar.com/docs/api/sun/misc/Unsafe.html" target="_blank" rel="external">sun.misc.Unsafe类</a><br><a href="https://en.wikipedia.org/wiki/Jenkins_hash_function" target="_blank" rel="external">Jenkins Hash Function</a></p>
 
         
