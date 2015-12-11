@@ -81,6 +81,262 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/10/classic_search_algorithm/" title="经典的查找算法" itemprop="url">经典的查找算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Geek Dong" target="_blank" itemprop="author">Geek Dong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-10T05:31:14.000Z" itemprop="datePublished"> 发表于 2015-12-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="折半查找算法">折半查找算法</h2><pre><code class="python">class Node:
+        def __init__(self,key,value):
+                self.__key=key
+                self.__value=value
+        @property
+        def key(self):
+                return self.__key
+        @property
+        def value(self):
+                return self.__value
+        @value.setter
+        def value(self,value):
+                self.__value=value
+
+class BinarySearch:
+    def __init__(self):
+        self.__nodes=[]
+        self.__size=0
+
+    @property
+    def size(self):
+                return self.__size
+
+        def isEmpty(self):
+                return size==0?True:False
+
+        def __searchByKeyUsingTailCall(self,key,lower,high,preMid):
+                if(lower&gt;high):
+                        return (preMid,False)
+                mid=(lower+high)/2
+                if __nodes[mid].key==key:
+                        return (mid,True)
+                else if __nodes[mid].key&lt;key:
+                        return __searchByKeyUsingTailCall(key,mid+1,high,mid)
+                else:
+                        return __searchByKeyUsingTailCall(key,lower,mid-1,mid)
+
+        def __searchByKey(self,key,lowerIndex=0,hightIndex=length(__nodes),useTailCall=False):
+                length=(__nodes)
+                if length==0:
+                        return (None,False)
+                if useTailCall:
+                       return __searchByKeyUsingTailCall(key,lowerIndex,hightIndex,-1)
+                lower=lowerIndex
+                high=hightIndex
+                while high&gt;lower:
+                        mid=(lower+high)/2
+                        if __nodes[mid].key==key:
+                                return (mid,True)
+                        else if __nodes[mid].key&lt;key:
+                                lower=mid+1
+                        else:
+                                high=mid-1
+                return (mid,False)
+
+        def contains(self,key):
+                (index,isFound)=__searchByKey(key)
+                return isFound
+
+        def delete(self,key):
+                (index,isFound)=__searchByKey(key)
+                if isFound:
+                        __nodes=__nodes[:index]+__nodes[(index+1):]
+                        return True
+                else:
+                        return False
+
+    def get(self,key):
+                (index,isFound)=__searchByKey(key)
+        if isFound:
+            return __nodes[index]
+        else:
+            return None
+
+    def put(self,key,value):
+        if value==None:
+            delete(key)
+            return None
+        (index,isFound)=__searchByKey(key)
+        if isFound:
+            oldValue=__nodes[index]
+            __nodes[index]=value
+            return oldValue
+        else:
+            if index==0 &amp;&amp; __nodes[index].key&gt;key:
+                __nodes=[None(key,value)]+__nodes
+            else:
+                __nodes=__nodes[:(index+1)]+[Node(key,value)]+__nodes[(index+1):]
+            return None
+
+    def min(self):
+        return isEmpty() if None else __nodes[0].key
+
+    def max(self):
+        return isEmpty() if None else __nodes[length(__nodes)-1].key
+
+    def select(self,k):
+        return isEmpty()==False&amp;&amp;k&gt;=0&amp;&amp;k&lt;length(__nodes) if __nodes[k].key else None
+
+    def deleteMin(self):
+        if isEmpty():
+            return False
+        __nodes=__nodes[1:]
+        return True
+
+    def deleteMax(self):
+        if isEmpty():
+            return False
+        __nodes=__nodes[:(length(__nodes)-1)]
+        return True
+
+    def floor(self,key):
+        (index,isFound)=__searchByKey(key)
+        if index==None || (index==0 &amp;&amp; __nodes[index].key&gt;key):
+            return None
+        else
+            return __nodes[index].key
+
+        def ceiling(self,key):
+                (index,isFound)=__searchByKey(key)
+                if index==None || index==length(__nodes):
+                        return None
+                else:
+                        if index==0 &amp;&amp; __nodes[index].key&gt;key:
+                                return __nodes[index].key
+                        else
+                                return __nodes[index+1].key
+
+        def rank(self,key):
+                (index,isFound)=__searchByKey(key)
+                if index==None || (index==0 &amp;&amp; __nodes[index].key&gt;key):
+                        return 0
+                else:
+                        return isFound?index:index+1
+
+        def keys(self):
+                keys=[]
+                for node in __nodes:
+                        keys=[node.key]+keys
+                return keys
+
+        def keys(self,lowerKey,highKey):
+                keys=[]
+                (lower,isFoundLower)=__searchByKey(lowerKey)
+                if lower==None || (lower==length(__nodes)-1 &amp;&amp; isFoundLower==False):
+                        return keys
+                trueLower=lower+1
+                if lower==0 || __nodes[lower].key&gt;lowerKey:
+                        trueLower=lower
+                (high,isFoundHigh)=__searchByKey(highKey,lowerIndex=trueLower)
+                if isFoundLower:
+                        keys=[__nodes[lower].key]
+                return keys+__nodes[trueLower:(high+1)]
+
+        def size(self,lowerKey,highKey):
+                keys=keys(lowerKey,highKey)
+                return length(keys)
+</code></pre>
+<h2 id="二叉查找树">二叉查找树</h2><h2 id="红黑树">红黑树</h2><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/10/io/" title="Java I/O流类型" itemprop="url">Java I/O流类型</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Geek Dong" target="_blank" itemprop="author">Geek Dong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-10T03:17:09.000Z" itemprop="datePublished"> 发表于 2015-12-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/09/string/" title="Java字符串类型" itemprop="url">Java字符串类型</a>
   </h1>
   <p class="article-author">By
@@ -229,7 +485,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/11/17/raft/" title="理解Raft协议" itemprop="url">理解Raft协议</a>
+      <a href="/2015/11/17/raft/" title="Raft协议与分布式一致性" itemprop="url">Raft协议与分布式一致性</a>
   </h1>
   <p class="article-author">By
        
@@ -490,7 +746,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/10/31/paxos/" title="理解Paxos协议" itemprop="url">理解Paxos协议</a>
+      <a href="/2015/10/31/paxos/" title="Paxos协议与分布式一致性" itemprop="url">Paxos协议与分布式一致性</a>
   </h1>
   <p class="article-author">By
        
