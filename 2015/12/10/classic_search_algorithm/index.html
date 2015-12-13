@@ -20,7 +20,10 @@
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/bsa.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/bst.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/bst_shape.png?imageView/2/w/519/q/80">
-<meta property="og:updated_time" content="2015-12-13T10:22:46.000Z">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/bst_find.png?imageView/2/w/519/q/80">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/insert_on_bst.png?imageView/2/w/519/q/80">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/delete_on_bst.png?imageView/2/w/519/q/80">
+<meta property="og:updated_time" content="2015-12-13T12:03:32.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="经典的查找算法">
 <meta name="twitter:description" content="折半查找算法   折半查找算法(half-interval search),也被称为二分查找算法,是在一个有序数组中查找一个特定元素的算法.搜索过程从数组的中间元素开始,如果中间元素正好是要查找的的元素,则搜索过程结束.如果某一个特定元素大于或小于中间元素,则在数组大于或小于中间元素的那一半查找.而且跟开始一样从中间元素开始比较。如果在某一步骤数组为空，则代表找不到.这种搜索算法每一次比较都使搜索">
@@ -99,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#折半查找算法"><span class="toc-number">1.</span> <span class="toc-text">折半查找算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析"><span class="toc-number">1.1.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉查找树"><span class="toc-number">2.</span> <span class="toc-text">二叉查找树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析-1"><span class="toc-number">2.1.</span> <span class="toc-text">复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插入操作"><span class="toc-number">2.2.</span> <span class="toc-text">插入操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVL树"><span class="toc-number">3.</span> <span class="toc-text">AVL树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红黑树"><span class="toc-number">4.</span> <span class="toc-text">红黑树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列表"><span class="toc-number">5.</span> <span class="toc-text">散列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跳表"><span class="toc-number">6.</span> <span class="toc-text">跳表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">8.</span> <span class="toc-text">引用</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#折半查找算法"><span class="toc-number">1.</span> <span class="toc-text">折半查找算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析"><span class="toc-number">1.1.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉查找树"><span class="toc-number">2.</span> <span class="toc-text">二叉查找树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析-1"><span class="toc-number">2.1.</span> <span class="toc-text">复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插入操作"><span class="toc-number">2.2.</span> <span class="toc-text">插入操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查找操作"><span class="toc-number">2.3.</span> <span class="toc-text">查找操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除操作"><span class="toc-number">2.4.</span> <span class="toc-text">删除操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVL树"><span class="toc-number">3.</span> <span class="toc-text">AVL树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红黑树"><span class="toc-number">4.</span> <span class="toc-text">红黑树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列表"><span class="toc-number">5.</span> <span class="toc-text">散列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跳表"><span class="toc-number">6.</span> <span class="toc-text">跳表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">8.</span> <span class="toc-text">引用</span></a></li></ol>
 		
 		</div>
 		
@@ -157,7 +160,30 @@
 </tr>
 </tbody>
 </table>
-<h3 id="插入操作">插入操作</h3><h2 id="AVL树">AVL树</h2><h2 id="红黑树">红黑树</h2><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2><h2 id="参考">参考</h2><p><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89.html" target="_blank" rel="external">接口定义</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95python%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">折半查找算法python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/二叉查找树python的实现.html" target="_blank" rel="external">二叉查找树python实现</a></p>
+<h3 id="插入操作">插入操作</h3><p>向一个二叉查找树b中插入一个节点s的算法,过程为:</p>
+<ol>
+<li>若b是空树，则将s所指结点作为根节点插入,否则：</li>
+<li>若s-&gt;data等于b的根节点的数据域之值,则返回,否则：</li>
+<li>若s-&gt;data小于b的根节点的数据域之值,则把s所指节点插入到左子树中,否则:</li>
+<li>把s所指节点插入到右子树中.(新插入节点总是叶子节点)</li>
+</ol>
+<p>下图显示二叉查找树的插入操作<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/bst_find.png?imageView/2/w/519/q/80" alt="Insert On BST"></p>
+<h3 id="查找操作">查找操作</h3><p>在二叉查找树b中查找x的过程为:</p>
+<ol>
+<li>若b是空树,则搜索失败,否则:</li>
+<li>若x等于b的根节点的数据域之值,则查找成功;否则:</li>
+<li>若x小于b的根节点的数据域之值,则搜索左子树;否则:</li>
+<li>查找右子树。</li>
+</ol>
+<p>下图显示二叉查找数的查找操作<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/insert_on_bst.png?imageView/2/w/519/q/80" alt="Search On BST"></p>
+<h3 id="删除操作">删除操作</h3><p>删除操作要分为三种情况进行讨论:</p>
+<ol>
+<li>如果待删除节点是叶子节点,则可以直接删除</li>
+<li>如果待删除节点有一个分支不为空,则将该分支直接继承给待删除节点的父节点</li>
+<li>如果待删除节点两个分支都不为空,则有两种方法可以处理,一种是查找待删除节点左分支最大的节点,如果该节点有左分支,则首先将该节点的左分支继承给其父节点,然后将待删除节点的位置替换为该节点.第二种情况是查找待删除节点右分支最小的节点,如果该节点有右分支,则首先将该节点的右分支继承给其父节点,然后将待删除节点的位置替换为该节点.</li>
+</ol>
+<p>下图显示二叉查找数的删除操作<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/delete_on_bst.png?imageView/2/w/519/q/80" alt="Delete On BST"></p>
+<h2 id="AVL树">AVL树</h2><h2 id="红黑树">红黑树</h2><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2><h2 id="参考">参考</h2><p><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89.html" target="_blank" rel="external">接口定义</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95python%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">折半查找算法python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/二叉查找树python的实现.html" target="_blank" rel="external">二叉查找树python实现</a></p>
 <h2 id="引用">引用</h2><p><a href="http://zh.wikipedia.net.ru/wiki/%E6%8A%98%E5%8D%8A%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95" target="_blank" rel="external">折半搜索算法</a><br><a href="http://zh.wikipedia.net.ru/wiki/%E4%BA%8C%E5%85%83%E6%90%9C%E5%B0%8B%E6%A8%B9" target="_blank" rel="external">二叉查找树</a><br><a href="http://zh.wikipedia.net.ru/wiki/%E7%BA%A2%E9%BB%91%E6%A0%91" target="_blank" rel="external">红黑树</a></p>
   
 	</div>
@@ -203,7 +229,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#折半查找算法"><span class="toc-number">1.</span> <span class="toc-text">折半查找算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析"><span class="toc-number">1.1.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉查找树"><span class="toc-number">2.</span> <span class="toc-text">二叉查找树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析-1"><span class="toc-number">2.1.</span> <span class="toc-text">复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插入操作"><span class="toc-number">2.2.</span> <span class="toc-text">插入操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVL树"><span class="toc-number">3.</span> <span class="toc-text">AVL树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红黑树"><span class="toc-number">4.</span> <span class="toc-text">红黑树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列表"><span class="toc-number">5.</span> <span class="toc-text">散列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跳表"><span class="toc-number">6.</span> <span class="toc-text">跳表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">8.</span> <span class="toc-text">引用</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#折半查找算法"><span class="toc-number">1.</span> <span class="toc-text">折半查找算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析"><span class="toc-number">1.1.</span> <span class="toc-text">复杂度分析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二叉查找树"><span class="toc-number">2.</span> <span class="toc-text">二叉查找树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂度分析-1"><span class="toc-number">2.1.</span> <span class="toc-text">复杂度分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插入操作"><span class="toc-number">2.2.</span> <span class="toc-text">插入操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查找操作"><span class="toc-number">2.3.</span> <span class="toc-text">查找操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除操作"><span class="toc-number">2.4.</span> <span class="toc-text">删除操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AVL树"><span class="toc-number">3.</span> <span class="toc-text">AVL树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#红黑树"><span class="toc-number">4.</span> <span class="toc-text">红黑树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#散列表"><span class="toc-number">5.</span> <span class="toc-text">散列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跳表"><span class="toc-number">6.</span> <span class="toc-text">跳表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">8.</span> <span class="toc-text">引用</span></a></li></ol>
  
   </div>
 
