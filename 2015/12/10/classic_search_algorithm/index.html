@@ -26,7 +26,8 @@
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/ll_rr.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/rl_lr1.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/avl_put.png?imageView/2/w/519/q/80">
-<meta property="og:updated_time" content="2015-12-16T13:06:51.000Z">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/delete1.png?imageView/2/w/519/q/80">
+<meta property="og:updated_time" content="2015-12-16T15:16:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="经典的查找算法">
 <meta name="twitter:description" content="折半查找算法   折半查找算法(half-interval search),也被称为二分查找算法,是在一个有序数组中查找一个特定元素的算法.搜索过程从数组的中间元素开始,如果中间元素正好是要查找的的元素,则搜索过程结束.如果某一个特定元素大于或小于中间元素,则在数组大于或小于中间元素的那一半查找.而且跟开始一样从中间元素开始比较。如果在某一步骤数组为空，则代表找不到.这种搜索算法每一次比较都使搜索">
@@ -193,7 +194,9 @@
 <p>下图显示左右和右左情况下进行树的平衡操作<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/rl_lr1.png?imageView/2/w/519/q/80" alt="Rebalance BST When BST Is In Left-Right Or Right-Left Situation"></p>
 <h3 id="插入操作-1">插入操作</h3><p>由于AVL树也是一颗二叉查找树,向AVL树插入节点时,插入节点的父节点要么是叶子节点或者父节点其左分支或右分支只有一个节点.所以对于存在左或右分支的被插入节点的父节点,只需修改父节点的平衡因子为0并且修改被插入的父节点到根节点的节点数即可.而对于被插入节点的父节点为叶子节点的情况,则从被插入父节点开始到根节点为止,依次检查各个节点的左右分支是否平衡,对于不平衡的节点依次进行树旋转.</p>
 <p>下图显示对于AVL树进行插入的操作<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/avl_put.png?imageView/2/w/519/q/80" alt="Insert On AVL Tree"></p>
-<h3 id="删除操作-1">删除操作</h3><h3 id="复杂度分析-2">复杂度分析</h3><table>
+<h3 id="删除操作-1">删除操作</h3><p>如果被删除节点为叶子节点或只有左或右分支,则考虑其父节点,如果父节点先前平衡因子为0,则只需调整其平衡因子.如果父节点平衡因子为1且删除其右分支节点或相反,则父节点发生失衡,因此从父节点开始向上调整失衡的节点.如果父节点平衡因子为1且删除其左分支节点或相反,则父节点平衡因子变为0,高度发生改变,则从父节点的父节点开始向上调整失衡节点</p>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/delete1.png?imageView/2/w/519/q/80" alt="Delete On AVL Tree When Deleted Node Is Leaf Or Has Only One Branch"></p>
+<h3 id="复杂度分析-2">复杂度分析</h3><table>
 <thead>
 <tr>
 <th>算法</th>
