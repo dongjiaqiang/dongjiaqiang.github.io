@@ -4,23 +4,28 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Kibana4与数据可视化 | Dong&#39;s Blog</title>
+    <title>集成ElasticSearch和Kibana4的SQLFire集群监控项目 | Dong&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="Geek Dong">
     
 
     
-    <meta name="description" content="引用SQLFire User GuideElasticsearch 权威指南(中文版)Elasticsearch Office WebsiteKibana4 User Guide">
+    <meta name="description" content="最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Kibana4与数据可视化">
+<meta property="og:title" content="集成ElasticSearch和Kibana4的SQLFire集群监控项目">
 <meta property="og:url" content="http://www.gohell.com.cn/2015/12/06/kibana_and_data_visulization/index.html">
 <meta property="og:site_name" content="Dong's Blog">
-<meta property="og:description" content="引用SQLFire User GuideElasticsearch 权威指南(中文版)Elasticsearch Office WebsiteKibana4 User Guide">
-<meta property="og:updated_time" content="2015-12-08T13:33:59.000Z">
+<meta property="og:description" content="最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/memoryoutput.JPG">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/query_mem.JPG">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/check_status.JPG">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/rizhi_out.JPG">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/es_kibana.png?imageView/2/w/919/q/100">
+<meta property="og:updated_time" content="2015-12-17T09:23:59.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kibana4与数据可视化">
-<meta name="twitter:description" content="引用SQLFire User GuideElasticsearch 权威指南(中文版)Elasticsearch Office WebsiteKibana4 User Guide">
+<meta name="twitter:title" content="集成ElasticSearch和Kibana4的SQLFire集群监控项目">
+<meta name="twitter:description" content="最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可">
 
     
     <link rel="alternative" href="/atom.xml" title="Dong&#39;s Blog" type="application/atom+xml">
@@ -80,7 +85,7 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/12/06/kibana_and_data_visulization/" title="Kibana4与数据可视化" itemprop="url">Kibana4与数据可视化</a>
+      <a href="/2015/12/06/kibana_and_data_visulization/" title="集成ElasticSearch和Kibana4的SQLFire集群监控项目" itemprop="url">集成ElasticSearch和Kibana4的SQLFire集群监控项目</a>
   </h1>
   <p class="article-author">By
        
@@ -96,11 +101,258 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">1.</span> <span class="toc-text">引用</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#监控手段"><span class="toc-number">1.</span> <span class="toc-text">监控手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire系统表和SQLFire节点状态查询命令"><span class="toc-number">2.</span> <span class="toc-text">基于SQLFire系统表和SQLFire节点状态查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">2.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令"><span class="toc-number">2.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行环境"><span class="toc-number">2.3.</span> <span class="toc-text">运行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存信息系统表"><span class="toc-number">2.4.</span> <span class="toc-text">内存信息系统表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点状态查询命令"><span class="toc-number">2.5.</span> <span class="toc-text">节点状态查询命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息"><span class="toc-number">2.6.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire节点的输出日志"><span class="toc-number">3.</span> <span class="toc-text">基于SQLFire节点的输出日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令-1"><span class="toc-number">3.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志等级"><span class="toc-number">3.3.</span> <span class="toc-text">日志等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志分析规则"><span class="toc-number">3.4.</span> <span class="toc-text">日志分析规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息-1"><span class="toc-number">3.5.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成ElasticSearch和Kibana4"><span class="toc-number">4.</span> <span class="toc-text">集成ElasticSearch和Kibana4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES索引和类型定义"><span class="toc-number">4.1.</span> <span class="toc-text">ES索引和类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射ES索引"><span class="toc-number">4.2.</span> <span class="toc-text">映射ES索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改memanalysis-sh脚本实现向ES索引数据"><span class="toc-number">4.3.</span> <span class="toc-text">修改memanalysis.sh脚本实现向ES索引数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">6.</span> <span class="toc-text">引用</span></a></li></ol>
 		
 		</div>
 		
-		<h2 id="引用">引用</h2><p><a href="http://sqlfire.docs.pivotal.io/userguide/index.html" target="_blank" rel="external">SQLFire User Guide</a><br><a href="http://es.xiaoleilu.com/index.html" target="_blank" rel="external">Elasticsearch 权威指南(中文版)</a><br><a href="https://www.elastic.co/products/elasticsearch/" target="_blank" rel="external">Elasticsearch Office Website</a><br><a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank" rel="external">Kibana4 User Guide</a></p>
+		<p>最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可以通过使用标准的JDBC接口访问SQLFire.</p>
+<h2 id="监控手段">监控手段</h2><ul>
+<li>基于SQLFire系统表和SQLFire节点状态查询命令(可以获取各个表的内存大小和表在节点间的负载信息,各个节点内存消耗和各个节点的状态信息等)</li>
+<li>基于SQLFire节点的输出日志(通过实时获取各个节点的日志的输出信息并进行实时分析,可以获取SQLFire集群还有各个节点的SQLFire语句执行情况等)</li>
+</ul>
+<h2 id="基于SQLFire系统表和SQLFire节点状态查询命令">基于SQLFire系统表和SQLFire节点状态查询命令</h2><p> 主要通过memanalysis.sh脚本实现,该脚本部署于任意一台可以访问SQLFire集群中任意节点的主机上.脚本可以通过crontab程序定时调用运行.</p>
+<h3 id="配置参数">配置参数</h3><ol>
+<li>SQLFire内存系统表查询语句文件路径</li>
+<li>内存监控日志存储路径</li>
+<li>节点状态监控日志存储路径</li>
+<li>SQLFire集群各个节点的HOST列表(IP列表)</li>
+<li>客户端IP(客户端IP和端口号为SQLFire集群中任意一个能提供客户端访问的节点的IP和端口号)</li>
+<li>客户端端口号</li>
+<li>节点的内存大小上限(单位:KB)</li>
+<li>节点的内存阈值警告百分比</li>
+<li>节点的内存负载倾斜阈值警告百分比</li>
+<li>被监控的表列表</li>
+<li>各个表的内存大小上限列表(单位:KB)</li>
+<li>表的内存阈值警告百分比</li>
+<li>表的内存负载倾斜阈值警告百分比</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sql_file=/app/sqlfire_script/sql/querymem.sql&#10;&#10;querymem_log_file=/app/sqlfire_script/log/querymem.log&#10;check_status_log_file=/app/sqlfire_script/log/check_status.log&#10;readonly hosts=(cvs-dbps01 cvs-dbps02 cvs-dbps04 cvs-dbps05 cvs-dbps06)&#10;readonly client_bind_address=$1&#10;readonly client_port=$2&#10;&#10;#unit size kb&#10;readonly ds_memory_max=$((8*1024*1024))&#10;readonly ds_memory_threshold=0.9&#10;readonly ds_load_lean_threshold=0.1&#10;&#10;readonly tables_name=(&#34;APP.AIRLINES&#34; &#34;APP.CITIES&#34; &#34;APP.COUNTRIES&#34;)&#10;&#10;#unit size kb&#10;readonly tables_memory_max=(10 20 30)&#10;readonly tables_memory_threshold=(0.9 0.9 0.9)&#10;readonly table_load_lean_threshold=0.1</span><br></pre></td></tr></table></figure>
+<h3 id="执行命令">执行命令</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#&#32534;&#36753;/etc/crontab&#25991;&#20214;&#10;vim /etc/crontab&#10;#&#21152;&#20837;&#22914;&#19979;&#19968;&#34892;&#20195;&#30721;&#20445;&#23384;&#36864;&#20986;&#10;*/5 * * * * root sh /app/sqlfire/memanalysis.sh 192.168.1.1 1528</span><br></pre></td></tr></table></figure>
+<h3 id="运行环境">运行环境</h3><p>脚本的执行主机必须安装sshpass,该程序可以实现非交互的Shell密码验证</p>
+<h3 id="内存信息系统表">内存信息系统表</h3><p>查看集群节点和所存储的表的内存消耗主要通过查看SQLFire内存信息系统表(SYS.MEMORYANALYTICS)</p>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TABLE_NAME</td>
+<td>表名</td>
+</tr>
+<tr>
+<td>ID</td>
+<td>每个成员都有唯一ID,格式为hostname(process_id)member_number:udp_port/tcp_port</td>
+</tr>
+<tr>
+<td>HOST</td>
+<td>主机名</td>
+</tr>
+<tr>
+<td>TOTAL_SIZE</td>
+<td>总内存大小</td>
+</tr>
+<tr>
+<td>NUM_ROWS</td>
+<td>行数</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/memoryoutput.JPG" alt="SYS.MEMORYANALYTICS Table Output"></p>
+<h3 id="节点状态查询命令">节点状态查询命令</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#&#26597;&#35810;Locator&#33410;&#28857;&#29366;&#24577;&#21629;&#20196;&#10;sqlf locator status -dir=locator&#10;#&#26597;&#35810;Server&#33410;&#28857;&#29366;&#24577;&#21629;&#20196;&#10;sqlf server status -dir=server1&#10;#&#20351;&#29992;sshpass&#23454;&#29616;&#38750;&#20132;&#20114;&#24335;Shell&#26597;&#35810;&#33410;&#28857;&#29366;&#24577;&#21629;&#20196;&#10;sshpass -p &#34;ocnosql&#34; ssh ocnosql@$hostname -o StrictHostKeyChecking=no &#34;/app/sqlfire/bin/sqlf locator status -dir=/app/sqlfire_work/locator;/app/sqlfire/bin/sqlf server status -dir=/app/sqlfire_work/server1&#34;</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>状态</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Waiting(等待)</td>
+<td>存储节点等待其他节点启动后实现数据的同步更新</td>
+</tr>
+<tr>
+<td>Stopped(停止)</td>
+<td>节点停止运行</td>
+</tr>
+<tr>
+<td>Running(运行)</td>
+<td>节点正在运行</td>
+</tr>
+</tbody>
+</table>
+<h3 id="输出信息">输出信息</h3><p>内存监控信息输出至querymem_log_file变量指定的文件下,输出格式为:</p>
+<ul>
+<li>[ERROR|NORMAL] [ start_time:START_TIME timeslape:TIMESLAPEs ] (QUERY_MESSAGE_INFO)</li>
+</ul>
+<p>其中日志开头出现NORMAL,表明各个节点和各个表的内存消耗百分比和内存负载倾斜百分比在阈值以下.日志开头出现ERROR,表明至少一个节点或一个表其内存消耗百分比或内存负载倾斜百分比超过阈值,也表明内存检查执行失败,同时日志后面具体的信息会出现”execute fail!”.每条日志消息也同时给出开始执行时间和执行时间.</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>节点</td>
+<td>节点主机名字,工作目录名和进程号,节点消耗的内存大小和存储数据的行数,节点消耗内存百分比和节点内存负载倾斜百分比</td>
+</tr>
+<tr>
+<td>表</td>
+<td>表名字,表的内存大小,表的总行数,表的内存消耗百分比和表的内存倾斜百分比在节点间的分布</td>
+</tr>
+<tr>
+<td>内存异常信息</td>
+<td>异常节点数和异常节点列表(内存百分比超过阈值和负载倾斜超过阈值),异常表数和异常表列表(内存百分比超过阈值和负载倾斜超过阈值)</td>
+</tr>
+<tr>
+<td>其他异常信息</td>
+<td>集群中存在的表不在脚本配置参数中,脚本配置参数中存在集群中不存在的表</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/query_mem.JPG" alt="Query Memory File Is Output"></p>
+<p>节点状态监控信息输出至check_status_log_file变量指定的文件下,输出格式为:</p>
+<ul>
+<li>[ERROR|NORMAL] [ start_time:START_TIME timeslape:TIMESLAPEs ] (STATUS_MESSAGE_INFO)</li>
+</ul>
+<p>其中日志开头出现出现NORMAL,表明各个节点的运行状态正常(Running).日志开头出现ERROR,表明至少有一个节点的运行状态不正常(Stopped或Waiting),同时也表明内存状态检查执行失败,同时日志后面具体的信息会出现”execute fail!”.每条日志消息也同时给出开始执行时间和执行时间.</p>
+<p>Tip: <strong>由于首先开始检查的是节点状态,如果节点状态检查执行失败,后续内存检查将不进行.</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>节点</td>
+<td>节点主机名字,工作目录名和进程号,节点状态</td>
+</tr>
+<tr>
+<td>异常信息</td>
+<td>异常状态节点数</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/check_status.JPG" alt="Check Staus File Is Output"></p>
+<h2 id="基于SQLFire节点的输出日志">基于SQLFire节点的输出日志</h2><p>  主要通过monitor.sh脚本实现,该脚本部署于所有SQLFire集群主机上,每个脚本运行实例负责监控一个节点的日志输出.每个脚本程序作为一个Linux后台程序,会持续运行不会自动退出.</p>
+<h3 id="配置参数-1">配置参数</h3><ol>
+<li>日志文件路径</li>
+<li>severe级别日志输出文件路径</li>
+<li>error级别日志输出文件路径</li>
+<li>warnning级别日志输出文件路径</li>
+<li>info级别日志输出文件路径</li>
+<li>节点名字(节点名字也就是节点工作目录名)</li>
+<li>主机名字</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readonly log_file=/app/sqlfire_log/server1/server1.log&#10;readonly severe_log_dir=/app/sqlfire_script/log/severe_log_dir&#10;readonly error_log_dir=/app/sqlfire_script/log/error_log_dir&#10;readonly warnning_log_dir=/app/sqlfire_script/log/warnning_log_dir&#10;readonly info_log_dir=/app/sqlfire_script/log/info_log_dir&#10;readonly member_name=server1&#10;readonly host_name=cvs-dbps02</span><br></pre></td></tr></table></figure>
+<h3 id="执行命令-1">执行命令</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh /app/sqlfire/monitor.sh &#38;</span><br></pre></td></tr></table></figure>
+<h3 id="日志等级">日志等级</h3><p>SQLFire输出的日志信息包含了7个级别,前四个级别和含义如下表:</p>
+<table>
+<thead>
+<tr>
+<th>日志等级</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>severe</td>
+<td>日志安全最高等级,出现该等级日志意味着系统存在严重错误阻止系统正常运行,需要关闭或重启集群的一部分节点去修复这个问题</td>
+</tr>
+<tr>
+<td>error</td>
+<td>意味着某些操作出现错误</td>
+</tr>
+<tr>
+<td>warnning</td>
+<td>警告信息</td>
+</tr>
+<tr>
+<td>info</td>
+<td>正常输出信息</td>
+</tr>
+</tbody>
+</table>
+<h3 id="日志分析规则">日志分析规则</h3><ol>
+<li>server成员启动后会保持与每个locator的通信,通过日志监控每个server与locator的连接关系</li>
+<li>每个server成员或locator成员在集群中有某个成员离开后会立即在日志中进行记录,用于监控成员的状态</li>
+<li>成员加入后会在locator成员日志中进行记录</li>
+<li>客户端连接一个server成员后,在该server成员日志中会记录客户端的执行请求(失败,错误或成功)</li>
+<li>select,update,delete请求有可能转发给其他节点,在每个节点上会跟踪其上的请求.可以监控客户端执行请求数与集群中总的请求数.</li>
+<li>warnning,error和severe级别日志说明集群出现异常,需要特别关注</li>
+<li>insert操作会在其直连的server日志上进行记录,但如果操作发生转发,其他被接受转发请求的节点的日志不会明显打印日志消息.</li>
+</ol>
+<h3 id="输出信息-1">输出信息</h3><table>
+<thead>
+<tr>
+<th>日志等级</th>
+<th>记录信息</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>servere</td>
+<td>所有servere级别日志</td>
+</tr>
+<tr>
+<td>error</td>
+<td>所有error级别日志</td>
+</tr>
+<tr>
+<td>warnning</td>
+<td>所有warnning级别日志</td>
+</tr>
+<tr>
+<td>info</td>
+<td>server与locator断开连接信息,成员离开信息,成员加入信息,客户端执行请求信息(成功,失败,错误)</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/rizhi_out.JPG" alt="Log File Is Output"></p>
+<h2 id="集成ElasticSearch和Kibana4">集成ElasticSearch和Kibana4</h2><p> 不管是内存状态,节点状态或节点日志输出信息都是记录于文本中,通过查看文本信息是无法直观的了解集群的运行状态.所以需要将文本数据进行可视化,通过可视化的方式观察集群的运行状态.通过了解,发现集成ElasticSearch(以下简称ES)和Kibana可以实现这个目的.ES是一种文本搜索和分析引擎,在这里将ES作为一种文档存储服务器(将监控数据以Json方式存储于ES中),而Kibana作为ES一种前置组件,可以将ES中存储的文档数据以Kibana提供的多种图表进行可视化展现.且使用ES还有一种好处是,ES提供了简单的RestFul API方式进行交互,这样可以直接改写监控脚本,在脚本中使用简单的curl命令将监控数据索引至ES中.</p>
+<p>下图展现集成ES与Kibana后的SQLFire监控架构图<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/es_kibana.png?imageView/2/w/919/q/100" alt="SQLFire Monitor Project Architecture Diagram"></p>
+<h3 id="ES索引和类型定义">ES索引和类型定义</h3><table>
+<thead>
+<tr>
+<th>索引名</th>
+<th>类型</th>
+<th>字段定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sqlfire-monitor-node-static-info</td>
+<td>node</td>
+<td>主机名和节点工作目录名唯一标识符,主机名,节点工作目录名,进程号,节点状态,已使用内存大小,内存使用率,行数,内存负载倾斜百分比</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-table-static-info</td>
+<td>table</td>
+<td>表名,表大小,表内存使用率,行数,是否发生负载倾斜</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-node-table-static-info</td>
+<td>node-table</td>
+</tr>
+</tbody>
+</table>
+<h3 id="映射ES索引">映射ES索引</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT http://localhost:9200/sqlfire-monitor-node-static-info -d &#39;&#123;&#10;&#9;&#34;mappings&#34;:&#123;&#10;&#9;&#9;&#34;_default_&#34;:&#123;&#10;&#9;&#9;&#9;&#34;properties&#34;:&#123;&#10;&#9;&#9;&#9;     &#34;id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;server_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;pid&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#125;&#10;&#9;&#125;&#10;&#9;&#125;&#10;&#125;&#10;&#39;;&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-table-static-info -d &#39;&#123;&#10;    &#34;mappings&#34;:&#123;&#10;    &#9;&#34;_default_&#34;:&#123;&#10;    &#9;&#9;&#34;properties&#34;:&#123;&#10;    &#9;&#9;&#9;&#34;table_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;    &#9;&#9;&#9;&#34;table_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;    &#9;&#9;&#9;&#34;is_load_lean&#34;:&#123;&#34;type&#34;:&#34;boolean&#34;&#125;&#10;    &#9;    &#125;&#10;        &#125;&#10;    &#125;&#10; &#125;&#39;;</span><br></pre></td></tr></table></figure>
+<h3 id="修改memanalysis-sh脚本实现向ES索引数据">修改memanalysis.sh脚本实现向ES索引数据</h3><p>  修改memanalysis.sh实现向ES索引数据并重命名为memanalysis_in_es.sh,在脚本中增加三个配置参数</p>
+<ol>
+<li>ES服务进程主机名</li>
+<li>ES服务进程端口号</li>
+<li>Json数据临时存储目录</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmp_json_data_dir=/app/sqlfire_script/tmp_json_data&#10;readonly es_host=&#34;localhost&#34;&#10;readonly es_port=9200</span><br></pre></td></tr></table></figure>
+<h2 id="参考">参考</h2><p><a href="https://github.com/dongjiaqiang/sqlfire_monitor_scripts.git" target="_blank" rel="external">集成ElasticSearch和Kibana4的SQLFire集群监控项目Github地址</a></p>
+<h2 id="引用">引用</h2><p><a href="http://sqlfire.docs.pivotal.io/userguide/index.html" target="_blank" rel="external">SQLFire User Guide</a><br><a href="http://es.xiaoleilu.com/index.html" target="_blank" rel="external">Elasticsearch 权威指南(中文版)</a><br><a href="https://www.elastic.co/products/elasticsearch/" target="_blank" rel="external">Elasticsearch Office Website</a><br><a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank" rel="external">Kibana4 User Guide</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -113,7 +365,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://www.gohell.com.cn/2015/12/06/kibana_and_data_visulization/" data-title="Kibana4与数据可视化 | Dong&#39;s Blog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://www.gohell.com.cn/2015/12/06/kibana_and_data_visulization/" data-title="集成ElasticSearch和Kibana4的SQLFire集群监控项目 | Dong&#39;s Blog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -153,7 +405,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">1.</span> <span class="toc-text">引用</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#监控手段"><span class="toc-number">1.</span> <span class="toc-text">监控手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire系统表和SQLFire节点状态查询命令"><span class="toc-number">2.</span> <span class="toc-text">基于SQLFire系统表和SQLFire节点状态查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">2.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令"><span class="toc-number">2.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行环境"><span class="toc-number">2.3.</span> <span class="toc-text">运行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存信息系统表"><span class="toc-number">2.4.</span> <span class="toc-text">内存信息系统表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点状态查询命令"><span class="toc-number">2.5.</span> <span class="toc-text">节点状态查询命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息"><span class="toc-number">2.6.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire节点的输出日志"><span class="toc-number">3.</span> <span class="toc-text">基于SQLFire节点的输出日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令-1"><span class="toc-number">3.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志等级"><span class="toc-number">3.3.</span> <span class="toc-text">日志等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志分析规则"><span class="toc-number">3.4.</span> <span class="toc-text">日志分析规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息-1"><span class="toc-number">3.5.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成ElasticSearch和Kibana4"><span class="toc-number">4.</span> <span class="toc-text">集成ElasticSearch和Kibana4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES索引和类型定义"><span class="toc-number">4.1.</span> <span class="toc-text">ES索引和类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射ES索引"><span class="toc-number">4.2.</span> <span class="toc-text">映射ES索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改memanalysis-sh脚本实现向ES索引数据"><span class="toc-number">4.3.</span> <span class="toc-text">修改memanalysis.sh脚本实现向ES索引数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">6.</span> <span class="toc-text">引用</span></a></li></ol>
  
   </div>
 
