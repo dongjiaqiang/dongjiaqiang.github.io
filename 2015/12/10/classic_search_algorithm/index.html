@@ -27,7 +27,8 @@
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/rl_lr1.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/avl_put.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/delete1.png?imageView/2/w/519/q/80">
-<meta property="og:updated_time" content="2015-12-17T09:23:35.000Z">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/delete_on_avl.png?imageView/2/w/519/q/80">
+<meta property="og:updated_time" content="2015-12-17T13:34:28.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="经典的查找算法">
 <meta name="twitter:description" content="折半查找算法   折半查找算法(half-interval search),也被称为二分查找算法,是在一个有序数组中查找一个特定元素的算法.搜索过程从数组的中间元素开始,如果中间元素正好是要查找的的元素,则搜索过程结束.如果某一个特定元素大于或小于中间元素,则在数组大于或小于中间元素的那一半查找.而且跟开始一样从中间元素开始比较。如果在某一步骤数组为空，则代表找不到.这种搜索算法每一次比较都使搜索">
@@ -196,6 +197,8 @@
 <p>下图显示对于AVL树进行插入的操作<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/avl_put.png?imageView/2/w/519/q/80" alt="Insert On AVL Tree"></p>
 <h3 id="删除操作-1">删除操作</h3><p>如果被删除节点为叶子节点或只有左或右分支,则考虑其父节点,如果父节点先前平衡因子为0,则只需调整其平衡因子.如果父节点平衡因子为1且删除其右分支节点或相反,则父节点发生失衡,因此从父节点开始向上调整失衡的节点.如果父节点平衡因子为1且删除其左分支节点或相反,则父节点平衡因子变为0,高度发生改变,则从父节点的父节点开始向上调整失衡节点</p>
 <p><img src="http://7xonn1.com1.z0.glb.clouddn.com/delete1.png?imageView/2/w/519/q/80" alt="Delete On AVL Tree When Deleted Node Is Leaf Or Has Only One Branch"></p>
+<p>如果被删除节点左右分支都不为空,则首先要判断被删节点的平衡因子,如果平衡因子为1,则从左分支获取最大节点替换被删节点,且被删节点左分支要进行树旋转对其进行重平衡,之后替换被删节点后,也需要对整颗树进行重平衡.如果平衡因子为-1,则从右分支获取最小节点替换被删节点,如果为0,则都行.</p>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/delete_on_avl.png?imageView/2/w/519/q/80" alt="Delete On AVL Tree When Two Branches Of Deleted Node Are Neither None"></p>
 <h3 id="复杂度分析-2">复杂度分析</h3><table>
 <thead>
 <tr>
@@ -216,7 +219,7 @@
 </tr>
 </tbody>
 </table>
-<h2 id="红黑树">红黑树</h2><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2><h2 id="参考">参考</h2><p><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89.html" target="_blank" rel="external">接口定义</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95python%E7%9A%84%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">折半查找算法python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91python%E4%B9%8B%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">二叉查找树python实现</a></p>
+<h2 id="红黑树">红黑树</h2><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2><h2 id="参考">参考</h2><p><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89.html" target="_blank" rel="external">接口定义</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95python%E7%9A%84%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">折半查找算法python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91python%E4%B9%8B%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">二叉查找树python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/AVL%E6%A0%91python%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">AVL树python实现</a></p>
 <h2 id="引用">引用</h2><p><a href="http://zh.wikipedia.net.ru/wiki/%E6%8A%98%E5%8D%8A%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95" target="_blank" rel="external">折半搜索算法</a><br><a href="http://zh.wikipedia.net.ru/wiki/%E4%BA%8C%E5%85%83%E6%90%9C%E5%B0%8B%E6%A8%B9" target="_blank" rel="external">二叉查找树</a><br><a href="http://zh.wikipedia.net.ru/wiki/AVL%E6%A0%91" target="_blank" rel="external">AVL树</a><br><a href="http://zh.wikipedia.net.ru/wiki/%E7%BA%A2%E9%BB%91%E6%A0%91" target="_blank" rel="external">红黑树</a></p>
   
 	</div>
