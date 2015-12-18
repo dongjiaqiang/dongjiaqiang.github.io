@@ -22,7 +22,8 @@
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/check_status.JPG">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/rizhi_out.JPG">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/es_kibana.png?imageView/2/w/919/q/100">
-<meta property="og:updated_time" content="2015-12-17T09:23:59.000Z">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/node_static_monitor.gif">
+<meta property="og:updated_time" content="2015-12-18T08:00:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="集成ElasticSearch和Kibana4的SQLFire集群监控项目">
 <meta name="twitter:description" content="最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可">
@@ -101,7 +102,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#监控手段"><span class="toc-number">1.</span> <span class="toc-text">监控手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire系统表和SQLFire节点状态查询命令"><span class="toc-number">2.</span> <span class="toc-text">基于SQLFire系统表和SQLFire节点状态查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">2.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令"><span class="toc-number">2.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行环境"><span class="toc-number">2.3.</span> <span class="toc-text">运行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存信息系统表"><span class="toc-number">2.4.</span> <span class="toc-text">内存信息系统表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点状态查询命令"><span class="toc-number">2.5.</span> <span class="toc-text">节点状态查询命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息"><span class="toc-number">2.6.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire节点的输出日志"><span class="toc-number">3.</span> <span class="toc-text">基于SQLFire节点的输出日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令-1"><span class="toc-number">3.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志等级"><span class="toc-number">3.3.</span> <span class="toc-text">日志等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志分析规则"><span class="toc-number">3.4.</span> <span class="toc-text">日志分析规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息-1"><span class="toc-number">3.5.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成ElasticSearch和Kibana4"><span class="toc-number">4.</span> <span class="toc-text">集成ElasticSearch和Kibana4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES索引和类型定义"><span class="toc-number">4.1.</span> <span class="toc-text">ES索引和类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射ES索引"><span class="toc-number">4.2.</span> <span class="toc-text">映射ES索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改memanalysis-sh脚本实现向ES索引数据"><span class="toc-number">4.3.</span> <span class="toc-text">修改memanalysis.sh脚本实现向ES索引数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">6.</span> <span class="toc-text">引用</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#监控手段"><span class="toc-number">1.</span> <span class="toc-text">监控手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire系统表和SQLFire节点状态查询命令"><span class="toc-number">2.</span> <span class="toc-text">基于SQLFire系统表和SQLFire节点状态查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">2.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令"><span class="toc-number">2.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行环境"><span class="toc-number">2.3.</span> <span class="toc-text">运行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存信息系统表"><span class="toc-number">2.4.</span> <span class="toc-text">内存信息系统表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点状态查询命令"><span class="toc-number">2.5.</span> <span class="toc-text">节点状态查询命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息"><span class="toc-number">2.6.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire节点的输出日志"><span class="toc-number">3.</span> <span class="toc-text">基于SQLFire节点的输出日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令-1"><span class="toc-number">3.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志等级"><span class="toc-number">3.3.</span> <span class="toc-text">日志等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志分析规则"><span class="toc-number">3.4.</span> <span class="toc-text">日志分析规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息-1"><span class="toc-number">3.5.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成ElasticSearch和Kibana4"><span class="toc-number">4.</span> <span class="toc-text">集成ElasticSearch和Kibana4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES索引和类型定义"><span class="toc-number">4.1.</span> <span class="toc-text">ES索引和类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射ES索引"><span class="toc-number">4.2.</span> <span class="toc-text">映射ES索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改memanalysis-sh脚本实现向ES索引数据"><span class="toc-number">4.3.</span> <span class="toc-text">修改memanalysis.sh脚本实现向ES索引数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQLFire节点静态监控面板"><span class="toc-number">4.4.</span> <span class="toc-text">SQLFire节点静态监控面板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">6.</span> <span class="toc-text">引用</span></a></li></ol>
 		
 		</div>
 		
@@ -351,6 +352,52 @@
 <li>Json数据临时存储目录</li>
 </ol>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmp_json_data_dir=/app/sqlfire_script/tmp_json_data&#10;readonly es_host=&#34;localhost&#34;&#10;readonly es_port=9200</span><br></pre></td></tr></table></figure>
+<h3 id="SQLFire节点静态监控面板">SQLFire节点静态监控面板</h3><table>
+<thead>
+<tr>
+<th>表名称</th>
+<th>表类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLFire节点内存使用率分布图</td>
+<td>饼图</td>
+<td>设置内存使用率范围</td>
+</tr>
+<tr>
+<td>SQLFire节点内存负载倾斜百分比分布图</td>
+<td>饼图</td>
+<td>设置内存负载倾斜百分比范围</td>
+</tr>
+<tr>
+<td>SQLFire节点状态分布图</td>
+<td>饼图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire主机内存使用柱状图</td>
+<td>柱状图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire主机表行数存储柱状图</td>
+<td>柱状图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点内存使用柱状图</td>
+<td>柱状图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点表行数存储柱状图</td>
+<td>柱状图</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/node_static_monitor.gif" alt="SQLFire Member Static Monitor"></p>
 <h2 id="参考">参考</h2><p><a href="https://github.com/dongjiaqiang/sqlfire_monitor_scripts.git" target="_blank" rel="external">集成ElasticSearch和Kibana4的SQLFire集群监控项目Github地址</a></p>
 <h2 id="引用">引用</h2><p><a href="http://sqlfire.docs.pivotal.io/userguide/index.html" target="_blank" rel="external">SQLFire User Guide</a><br><a href="http://es.xiaoleilu.com/index.html" target="_blank" rel="external">Elasticsearch 权威指南(中文版)</a><br><a href="https://www.elastic.co/products/elasticsearch/" target="_blank" rel="external">Elasticsearch Office Website</a><br><a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank" rel="external">Kibana4 User Guide</a></p>
   
@@ -405,7 +452,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#监控手段"><span class="toc-number">1.</span> <span class="toc-text">监控手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire系统表和SQLFire节点状态查询命令"><span class="toc-number">2.</span> <span class="toc-text">基于SQLFire系统表和SQLFire节点状态查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">2.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令"><span class="toc-number">2.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行环境"><span class="toc-number">2.3.</span> <span class="toc-text">运行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存信息系统表"><span class="toc-number">2.4.</span> <span class="toc-text">内存信息系统表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点状态查询命令"><span class="toc-number">2.5.</span> <span class="toc-text">节点状态查询命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息"><span class="toc-number">2.6.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire节点的输出日志"><span class="toc-number">3.</span> <span class="toc-text">基于SQLFire节点的输出日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令-1"><span class="toc-number">3.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志等级"><span class="toc-number">3.3.</span> <span class="toc-text">日志等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志分析规则"><span class="toc-number">3.4.</span> <span class="toc-text">日志分析规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息-1"><span class="toc-number">3.5.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成ElasticSearch和Kibana4"><span class="toc-number">4.</span> <span class="toc-text">集成ElasticSearch和Kibana4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES索引和类型定义"><span class="toc-number">4.1.</span> <span class="toc-text">ES索引和类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射ES索引"><span class="toc-number">4.2.</span> <span class="toc-text">映射ES索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改memanalysis-sh脚本实现向ES索引数据"><span class="toc-number">4.3.</span> <span class="toc-text">修改memanalysis.sh脚本实现向ES索引数据</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">6.</span> <span class="toc-text">引用</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#监控手段"><span class="toc-number">1.</span> <span class="toc-text">监控手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire系统表和SQLFire节点状态查询命令"><span class="toc-number">2.</span> <span class="toc-text">基于SQLFire系统表和SQLFire节点状态查询命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">2.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令"><span class="toc-number">2.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行环境"><span class="toc-number">2.3.</span> <span class="toc-text">运行环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存信息系统表"><span class="toc-number">2.4.</span> <span class="toc-text">内存信息系统表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#节点状态查询命令"><span class="toc-number">2.5.</span> <span class="toc-text">节点状态查询命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息"><span class="toc-number">2.6.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基于SQLFire节点的输出日志"><span class="toc-number">3.</span> <span class="toc-text">基于SQLFire节点的输出日志</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数-1"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行命令-1"><span class="toc-number">3.2.</span> <span class="toc-text">执行命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志等级"><span class="toc-number">3.3.</span> <span class="toc-text">日志等级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#日志分析规则"><span class="toc-number">3.4.</span> <span class="toc-text">日志分析规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出信息-1"><span class="toc-number">3.5.</span> <span class="toc-text">输出信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集成ElasticSearch和Kibana4"><span class="toc-number">4.</span> <span class="toc-text">集成ElasticSearch和Kibana4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ES索引和类型定义"><span class="toc-number">4.1.</span> <span class="toc-text">ES索引和类型定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#映射ES索引"><span class="toc-number">4.2.</span> <span class="toc-text">映射ES索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改memanalysis-sh脚本实现向ES索引数据"><span class="toc-number">4.3.</span> <span class="toc-text">修改memanalysis.sh脚本实现向ES索引数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQLFire节点静态监控面板"><span class="toc-number">4.4.</span> <span class="toc-text">SQLFire节点静态监控面板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用"><span class="toc-number">6.</span> <span class="toc-text">引用</span></a></li></ol>
  
   </div>
 
