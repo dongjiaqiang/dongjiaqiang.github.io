@@ -256,9 +256,20 @@
 <li>红链接均为左链接</li>
 <li>没有任何一个节点同时和和两条红链接相连</li>
 <li>该树是完美黑色平衡,即任意的空链接到根节点的路径上黑链接数量相同</li>
+<li>根节点为黑色节点</li>
 </ol>
+<p>同时节点使用父节点指向自己的链接的颜色来表示该节点的颜色,链接为红则为红节点,链接为黑则为黑节点,节点颜色保存在节点中.</p>
 <p>下图展现一颗典型的红黑树结构<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/rbtree.png?imageView/2/w/519/q/80" alt="Red Black Tree Structure"></p>
-<h4 id="插入">插入</h4><h3 id="复杂度分析-3">复杂度分析</h3><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2><h2 id="参考">参考</h2><p><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89.html" target="_blank" rel="external">接口定义</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95python%E7%9A%84%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">折半查找算法python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91python%E4%B9%8B%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">二叉查找树python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/AVL%E6%A0%91python%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">AVL树python实现</a></p>
+<h3 id="旋转">旋转</h3><p>我们在操作红黑树的过程中可能会出现红色的右链接或者出现两条连续的红链接,但通过旋转这些情况都会被修复.对红色的右链接需要被转化为左链接,称为左旋转.而对于相反的过程称为右旋转.</p>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/rotate_on_rbtree.png?imageView/2/w/519/q/80" alt="Left-Rotation And Right-Rotation On Red Black Tree"></p>
+<h3 id="插入">插入</h3><p>对于插入操作,首先要保证树的有序性和完美平衡性,所以要以二叉查找树方式插入节点,插入节点后为了保持树的完美平衡性,则需要以红色右链接或红色左链接方式链接插入的节点,插入后如果存在红色右链接或连续红色链接,则通过旋转方式来修复.</p>
+<p>对于向只含有一个根节点的红黑树插入一个节点,比较插入节点和根节点的键,如果小于则根节点以红色左链接链接插入节点.如果大于则根节点以红色右链接链接插入节点,且对红色右链接进行一次左旋转,使红色右链接变为红色左链接.对于从树底部插入节点情情况,由于为了保持树的完美平衡性,需要以红色链接方式插入节点,如果被插入节点为黑色节点且插入左分支,则直接以红色左链接方式插入.如果插入右分支,则以红色右链接方式插入且做一次左旋转修复.</p>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/insert_1.png?imageView/2/w/519/q/80" alt="Insert On Red Black Tree When Inserted Node Is A Root Or A Black Node And Is Also A Leaf"></p>
+<p>被插入节点如果其左分支为红节点,则插入后被插入节点将有两条红链接,可以直接将这两条红链接变为黑链接解决.被插入节点为红节点,则如果插入红节点左分支,则对指向被插入节点的红色左链接进行右旋,之后将两条红链接变为黑链接解决并且指向父节点的黑链接需要变换为红链接.如果插入红节点右分支,则对被插入节点的红链接进行左旋变为左链接,之后对指向被插入节点的红链接进行右旋,并将两条红链接变为黑链接解决并且指向父节点的黑链接需要变换为红链接.</p>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/insert_4.png?imageView/2/w/519/q/80" alt="Insert On Red Black Tree When Inserted Node Is A Red Node Or LeftChild Is A Red Node"></p>
+<p>在上述插入操作中,有可能使红黑树中已有的黑节点变换为红节点,这就可能出现红色右链接或连续的红链接,这时需要递归的处理这些情况.</p>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/rbt_rotation.png?imageView/2/w/519/q/80" alt="递归的处理链接向上转移"></p>
+<h3 id="复杂度分析-3">复杂度分析</h3><h2 id="散列表">散列表</h2><h2 id="跳表">跳表</h2><h2 id="参考">参考</h2><p><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89.html" target="_blank" rel="external">接口定义</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E6%8A%98%E5%8D%8A%E6%9F%A5%E6%89%BE%E7%AE%97%E6%B3%95python%E7%9A%84%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">折半查找算法python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91python%E4%B9%8B%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">二叉查找树python实现</a><br><a href="http://7xp4g9.com1.z0.glb.clouddn.com/AVL%E6%A0%91python%E5%AE%9E%E7%8E%B0.html" target="_blank" rel="external">AVL树python实现</a></p>
 <h2 id="引用">引用</h2><p><a href="http://zh.wikipedia.net.ru/wiki/%E6%8A%98%E5%8D%8A%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95" target="_blank" rel="external">折半搜索算法</a><br><a href="http://zh.wikipedia.net.ru/wiki/%E4%BA%8C%E5%85%83%E6%90%9C%E5%B0%8B%E6%A8%B9" target="_blank" rel="external">二叉查找树</a><br><a href="http://zh.wikipedia.net.ru/wiki/AVL%E6%A0%91" target="_blank" rel="external">AVL树</a><br><a href="http://zh.wikipedia.net.ru/wiki/%E7%BA%A2%E9%BB%91%E6%A0%91" target="_blank" rel="external">红黑树</a></p>
 
         
