@@ -81,6 +81,55 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/21/use_vim/" title="vim的使用" itemprop="url">vim的使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Geek Dong" target="_blank" itemprop="author">Geek Dong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-21T06:36:19.000Z" itemprop="datePublished"> 发表于 2015-12-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/17/hadoop_rpc/" title="Hadoop源码阅读之Hadoop RPC框架解析" itemprop="url">Hadoop源码阅读之Hadoop RPC框架解析</a>
   </h1>
   <p class="article-author">By
@@ -752,7 +801,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="映射ES索引">映射ES索引</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT http://localhost:9200/sqlfire-monitor-node-static-info -d &#39;&#123;&#10;&#9;&#34;mappings&#34;:&#123;&#10;&#9;&#9;&#34;_default_&#34;:&#123;&#10;&#9;&#9;&#9;&#34;properties&#34;:&#123;&#10;&#9;&#9;&#9;     &#34;id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;server_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;pid&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#125;&#10;&#9;&#125;&#10;&#9;&#125;&#10;&#125;&#10;&#39;;&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-table-static-info -d &#39;&#123;&#10;    &#34;mappings&#34;:&#123;&#10;    &#9;&#34;_default_&#34;:&#123;&#10;    &#9;&#9;&#34;properties&#34;:&#123;&#10;    &#9;&#9;&#9;&#34;table_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;    &#9;&#9;&#9;&#34;table_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;    &#9;&#9;&#9;&#34;is_load_lean&#34;:&#123;&#34;type&#34;:&#34;boolean&#34;&#125;&#10;    &#9;    &#125;&#10;        &#125;&#10;    &#125;&#10; &#125;&#39;;</span><br></pre></td></tr></table></figure>
+<h3 id="映射ES索引">映射ES索引</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT http://localhost:9200/sqlfire-monitor-node-static-info -d &#39;&#123;&#10;&#9;&#34;mappings&#34;:&#123;&#10;&#9;&#9;&#34;_default_&#34;:&#123;&#10;&#9;&#9;&#9;&#34;properties&#34;:&#123;&#10;&#9;&#9;&#9;     &#34;id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;server_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;pid&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#125;&#10;&#9;&#125;&#10;&#9;&#125;&#10;&#125;&#10;&#39;;&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-table-static-info -d &#39;&#123;&#10;    &#34;mappings&#34;:&#123;&#10;    &#9;&#34;_default_&#34;:&#123;&#10;    &#9;&#9;&#34;properties&#34;:&#123;&#10;    &#9;&#9;&#9;&#34;table_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;    &#9;&#9;&#9;&#34;table_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;    &#9;&#9;&#9;&#34;max_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;    &#125;&#10;        &#125;&#10;    &#125;&#10; &#125;&#39;;</span><br></pre></td></tr></table></figure>
 <h3 id="修改memanalysis-sh脚本实现向ES索引数据">修改memanalysis.sh脚本实现向ES索引数据</h3><p>  修改memanalysis.sh实现向ES索引数据并重命名为memanalysis_in_es.sh,在脚本中增加三个配置参数</p>
 <ol>
 <li>ES服务进程主机名</li>
@@ -763,8 +812,8 @@
 <h3 id="SQLFire节点静态监控面板">SQLFire节点静态监控面板</h3><table>
 <thead>
 <tr>
-<th>表名称</th>
-<th>表类型</th>
+<th>面板名称</th>
+<th>面板类型</th>
 <th>备注</th>
 </tr>
 </thead>
@@ -806,6 +855,37 @@
 </tbody>
 </table>
 <p><img src="http://7xonn1.com1.z0.glb.clouddn.com/node_static_monitor.gif" alt="SQLFire Member Static Monitor"></p>
+<h3 id="SQLFire表静态监控面板">SQLFire表静态监控面板</h3><table>
+<thead>
+<tr>
+<th>面板名称</th>
+<th>面板类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLFire表内存使用率分布图</td>
+<td>饼图</td>
+<td>设置内存使用率范围</td>
+</tr>
+<tr>
+<td>SQLFire表内存负载倾斜百分比最大值分布图</td>
+<td>饼图</td>
+<td>设置内存负载倾斜百分比范围</td>
+</tr>
+<tr>
+<td>SQLFire表内存使用柱状图</td>
+<td>柱状图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire表行数柱状图</td>
+<td>柱状图</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/kibana_table_static_monitor.gif" alt="SQLFire Table Static Monitor"></p>
 <h2 id="参考">参考</h2><p><a href="https://github.com/dongjiaqiang/sqlfire_monitor_scripts.git" target="_blank" rel="external">集成ElasticSearch和Kibana4的SQLFire集群监控项目Github地址</a></p>
 <h2 id="引用">引用</h2><p><a href="http://sqlfire.docs.pivotal.io/userguide/index.html" target="_blank" rel="external">SQLFire User Guide</a><br><a href="http://es.xiaoleilu.com/index.html" target="_blank" rel="external">Elasticsearch 权威指南(中文版)</a><br><a href="https://www.elastic.co/products/elasticsearch/" target="_blank" rel="external">Elasticsearch Office Website</a><br><a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank" rel="external">Kibana4 User Guide</a></p>
 
@@ -1099,55 +1179,10 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/10/31/paxos/" title="Paxos协议与分布式一致性" itemprop="url">Paxos协议与分布式一致性</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="Geek Dong" target="_blank" itemprop="author">Geek Dong</a>
-		
-  <p class="article-time">
-    <time datetime="2015-10-30T17:32:21.000Z" itemprop="datePublished"> 发表于 2015-10-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
 
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
+  <nav id="page-nav" class="clearfix">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+  </nav>
 
 </div>
       <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
