@@ -613,7 +613,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/12/06/kibana_and_data_visulization/" title="" itemprop="url"></a>
+      <a href="/2015/12/06/kibana_and_data_visulization/" title="集成ElasticSearch和Kibana4的SQLFire集群监控项目" itemprop="url">集成ElasticSearch和Kibana4的SQLFire集群监控项目</a>
   </h1>
   <p class="article-author">By
        
@@ -626,9 +626,7 @@
 </header>
     <div class="article-content">
         
-        <h1 id="SQLFire监控脚本">SQLFire监控脚本</h1><p>最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可以通过使用标准的JDBC接口访问SQLFire.</p>
-<p>=======</p>
-<h2 id="监控手段">监控手段</h2><ul>
+        <h2 id="监控手段">监控手段</h2><ul>
 <li>基于SQLFire系统表和SQLFire节点状态查询命令(可以获取各个表的内存大小和表在节点间的负载信息,各个节点内存消耗和各个节点的状态信息等)</li>
 <li>基于SQLFire节点的输出日志(通过实时获取各个节点的日志的输出信息并进行实时分析,可以获取SQLFire集群还有各个节点的SQLFire语句执行情况等)</li>
 </ul>
