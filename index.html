@@ -613,7 +613,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/12/06/kibana_and_data_visulization/" title="集成ElasticSearch和Kibana4的SQLFire集群监控项目" itemprop="url">集成ElasticSearch和Kibana4的SQLFire集群监控项目</a>
+      <a href="/2015/12/06/kibana_and_data_visulization/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
        
@@ -626,7 +626,8 @@
 </header>
     <div class="article-content">
         
-        <p>最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可以通过使用标准的JDBC接口访问SQLFire.</p>
+        <h1 id="SQLFire监控脚本">SQLFire监控脚本</h1><p>最近要做关于SQLFire数据库集群的运维,由于关于SQLFire的资料在网络上非常的缺乏,唯一能详细了解SQLFire各个特性的途径就是去看其官方的资料手册.通过对官方资料手册的阅读,大致了解了SQLFire的各种特性.首先SQLFire是一个分布式内存数据库,但是不同于一般非关系型数据库,SQLFire对外表现为一个关系型数据库的模型.SQLFire对外提供了标准的SQL访问接口,所以应用层可以通过使用标准的JDBC接口访问SQLFire.</p>
+<p>=======</p>
 <h2 id="监控手段">监控手段</h2><ul>
 <li>基于SQLFire系统表和SQLFire节点状态查询命令(可以获取各个表的内存大小和表在节点间的负载信息,各个节点内存消耗和各个节点的状态信息等)</li>
 <li>基于SQLFire节点的输出日志(通过实时获取各个节点的日志的输出信息并进行实时分析,可以获取SQLFire集群还有各个节点的SQLFire语句执行情况等)</li>
@@ -771,8 +772,14 @@
 <li>info级别日志输出文件路径</li>
 <li>节点名字(节点名字也就是节点工作目录名)</li>
 <li>主机名字</li>
+<li>SELECT语句存储文件路径</li>
+<li>UPDATE语句存储文件路径</li>
+<li>DELETE语句存储文件路径</li>
+<li>CREATE语句存储文件路径</li>
+<li>INSERT语句存储文件路径</li>
+<li>DROP语句存储文件路径</li>
 </ol>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readonly log_file=/app/sqlfire_log/server1/server1.log&#10;readonly severe_log_dir=/app/sqlfire_script/log/severe_log_dir&#10;readonly error_log_dir=/app/sqlfire_script/log/error_log_dir&#10;readonly warnning_log_dir=/app/sqlfire_script/log/warnning_log_dir&#10;readonly info_log_dir=/app/sqlfire_script/log/info_log_dir&#10;readonly member_name=server1&#10;readonly host_name=cvs-dbps02</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">readonly log_file=/app/sqlfire_log/server1/server1.log&#10;readonly severe_log_dir=/app/sqlfire_script/log/severe_log_dir&#10;readonly error_log_dir=/app/sqlfire_script/log/error_log_dir&#10;readonly warnning_log_dir=/app/sqlfire_script/log/warnning_log_dir&#10;readonly info_log_dir=/app/sqlfire_script/log/info_log_dir&#10;readonly member_name=server1&#10;readonly host_name=$HOST&#10;readonly store_select_sql=/app/sqlfire_script/log/info_select_log_dir&#10;readonly store_update_sql=/app/sqlfire_script/log/info_update_log_dir&#10;readonly store_delete_sql=/app/sqlfire_script/log/info_delete_log_dir&#10;readonly store_create_sql=/app/sqlfire_script/log/info_create_log_dir&#10;readonly store_insert_sql=/app/sqlfire_script/log/info_insert_log_dir&#10;readonly store_drop_sql=/app/sqlfire_script/log/info_drop_log_dir</span><br></pre></td></tr></table></figure>
 <h3 id="执行命令-1">执行命令</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh /app/sqlfire/monitor.sh &#38;</span><br></pre></td></tr></table></figure>
 <h3 id="日志等级">日志等级</h3><p>SQLFire输出的日志信息包含了7个级别,前四个级别和含义如下表:</p>
 <table>
@@ -850,21 +857,103 @@
 <tbody>
 <tr>
 <td>sqlfire-monitor-node-static-info</td>
-<td>node</td>
+<td>node-name</td>
 <td>主机名和节点工作目录名唯一标识符,主机名,节点工作目录名,进程号,节点状态,已使用内存大小,内存使用率,行数,内存负载倾斜百分比</td>
 </tr>
 <tr>
 <td>sqlfire-monitor-table-static-info</td>
-<td>table</td>
+<td>table-name</td>
 <td>表名,表大小,表内存使用率,行数,表负载倾斜百分比最大值</td>
 </tr>
 <tr>
-<td>sqlfire-monitor-node-table-static-info</td>
-<td>node-table</td>
+<td>sqlfire-monitor-node-dynamic-info</td>
+<td>node-info</td>
+<td>主机名和节点工作目录名唯一标识符,主机名,节点工作目录名,进程号,已使用内存大小,行数,内存使用率,内存负载倾斜百分比,时间戳(Unix时间戳毫秒值)</td>
+<td></td>
+</tr>
+<tr>
+<td>sqlfire-monitor-table-dynamic-info</td>
+<td>table-info</td>
+<td>表名,表大小,表行数,表内存使用率,表负载倾斜百分比最大值,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-table-node-info</td>
+<td>table-node-info</td>
+<td>表名,节点名,表行数,表大小</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-server-locator-info</td>
+<td>server-host<em>server-name</em>locator-host*locator-name</td>
+<td>Locator主机名和Locator工作目录名唯一ID,Server主机名,Server工作目录名,连接状态</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-member-last-info</td>
+<td>member-last-info</td>
+<td>主机名,进程号,最近一次状态,最近一次状态时间</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-error-log-info</td>
+<td>error-log</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-warnning-log-info</td>
+<td>warnning-log</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-servere-log-info</td>
+<td>servere-log</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-error-sql-info</td>
+<td>error-sql</td>
+<td>主机名,节点工作目录名,错误SQL语句,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-fail-sql-info</td>
+<td>fail-sql</td>
+<td>主机名,节点工作目录名,失败SQL语句,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-select-sql-info</td>
+<td>select-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-update-sql-info</td>
+<td>update-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-delete-sql-info</td>
+<td>delete-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-direct-insert-sql-info</td>
+<td>direct-insert-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-direct-select-sql-info</td>
+<td>direct-select-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-direct-update-sql-info</td>
+<td>direct-update-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
+</tr>
+<tr>
+<td>sqlfire-monitor-direct-delete-sql-info</td>
+<td>direct-delete-sql</td>
+<td>主机名,节点工作目录名,时间戳(Unix时间戳毫秒值)</td>
 </tr>
 </tbody>
 </table>
-<h3 id="映射ES索引">映射ES索引</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT http://localhost:9200/sqlfire-monitor-node-static-info -d &#39;&#123;&#10;&#9;&#34;mappings&#34;:&#123;&#10;&#9;&#9;&#34;_default_&#34;:&#123;&#10;&#9;&#9;&#9;&#34;properties&#34;:&#123;&#10;&#9;&#9;&#9;     &#34;id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;server_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;pid&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#9;     &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;&#9;&#9;&#9;     &#34;mem_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;&#9;&#9;&#125;&#10;&#9;&#125;&#10;&#9;&#125;&#10;&#125;&#10;&#39;;&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-table-static-info -d &#39;&#123;&#10;    &#34;mappings&#34;:&#123;&#10;    &#9;&#34;_default_&#34;:&#123;&#10;    &#9;&#9;&#34;properties&#34;:&#123;&#10;    &#9;&#9;&#9;&#34;table_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;    &#9;&#9;&#9;&#34;table_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;&#9;&#9;&#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;&#10;    &#9;&#9;&#9;&#34;max_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#9;    &#125;&#10;        &#125;&#10;    &#125;&#10; &#125;&#39;;</span><br></pre></td></tr></table></figure>
+<h3 id="映射和删除ES索引">映射和删除ES索引</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XDELETE http://localhost:9200/sqlfire-monitor-node-static-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-node-static-info -d &#39;&#123;&#10;  &#34;mappings&#34;:&#123;&#10;    &#34;_default_&#34;:&#123;&#10;      &#34;properties&#34;:&#123;&#10;           &#34;id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;pid&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;,&#10;           &#34;status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;mem_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;,&#10;           &#34;mem_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;    &#125;&#10;  &#125;&#10;  &#125;&#10;&#125;&#10;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-table-static-infoo/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-table-static-info -d &#39;&#123;&#10;    &#34;mappings&#34;:&#123;&#10;      &#34;_default_&#34;:&#123;&#10;        &#34;properties&#34;:&#123;&#10;          &#34;table_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;          &#34;table_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;          &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;          &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;,&#10;          &#34;max_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10; &#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-node-dynamic-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-node-dynamic-info -d &#39;&#123;&#10;  &#34;mappings&#34;:&#123;&#10;    &#34;_default_&#34;:&#123;&#10;      &#34;properties&#34;:&#123;&#10;           &#34;id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;pid&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;,&#10;           &#34;mem_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;,&#10;           &#34;mem_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;        &#125;&#10;      &#125;&#10;  &#125;&#10;&#125;&#10;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-table-dynamic-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-table-dynamic-info -d &#39;&#123;&#10;  &#34;mappings&#34;:&#123;&#10;    &#34;_default_&#34;:&#123;&#10;      &#34;properties&#34;:&#123;&#10;           &#34;table_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;table_size&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;           &#34;mem_used_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;,&#10;           &#34;rows&#34;:&#123;&#34;type&#34;:&#34;integer&#34;&#125;,&#10;           &#34;max_load_lean_percent&#34;:&#123;&#34;type&#34;:&#34;double&#34;&#125;&#10;           &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;        &#125;&#10;      &#125;&#10;  &#125;&#10;&#125;&#10;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-server-locator-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-server-locator-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;locator_id&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;server_host&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;server_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;connect_status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-member-last-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-member-last-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;pid&#34;:&#123;&#34;type&#34;:&#34;int&#34;&#125;,&#10;            &#34;last_status&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;last_status_timestamp&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-error-log-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-error-log-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-servere-log-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-servere-log-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-warnning-log-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-warnning-log-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-error-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-error-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;error_sql&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-fail-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-fail-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;fail_sql&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-select-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-select-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-update-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-update-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-delete-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-delete-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-direct-insert-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-direct-insert-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-direct-select-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-direct-select-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-direct-update-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-direct-update-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;&#10;curl -XDELETE http://localhost:9200/sqlfire-monitor-direct-delete-sql-info/&#10;curl -XPUT http://localhost:9200/sqlfire-monitor-direct-delete-sql-info -d &#39;&#123;&#10;     &#34;mappings&#34;:&#123;&#10;        &#34;_default_&#34;:&#123;&#10;          &#34;properties&#34;:&#123;&#10;            &#34;host_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;mem_name&#34;:&#123;&#34;type&#34;:&#34;string&#34;,&#34;index&#34;:&#34;not_analyzed&#34;&#125;,&#10;            &#34;timestamp&#34;:&#123;&#34;type&#34;:&#34;date&#34;&#125;&#10;          &#125;&#10;        &#125;&#10;    &#125;&#10;&#125;&#39;;</span><br></pre></td></tr></table></figure>
 <h3 id="修改memanalysis-sh脚本实现向ES索引数据">修改memanalysis.sh脚本实现向ES索引数据</h3><p>  修改memanalysis.sh实现向ES索引数据并重命名为memanalysis_in_es.sh,在脚本中增加三个配置参数</p>
 <ol>
 <li>ES服务进程主机名</li>
@@ -949,7 +1038,182 @@
 </tbody>
 </table>
 <p><img src="http://7xonn1.com1.z0.glb.clouddn.com/kibana_table_static_monitor.gif" alt="SQLFire Table Static Monitor"></p>
-<h2 id="参考">参考</h2><p><a href="https://github.com/dongjiaqiang/sqlfire_monitor_scripts.git" target="_blank" rel="external">集成ElasticSearch和Kibana4的SQLFire集群监控项目Github地址</a></p>
+<h3 id="SQLFire表动态监控面板">SQLFire表动态监控面板</h3><table>
+<thead>
+<tr>
+<th>面板名称</th>
+<th>面板类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLFire表内存大小变化图</td>
+<td>折现图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire表行数变化图</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire表内存使用率变化图</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire表内存负载倾斜百分比最大值变化图</td>
+<td>折线图</td>
+</tr>
+</tbody>
+</table>
+<h3 id="SQLFire节点动态监控面板">SQLFire节点动态监控面板</h3><table>
+<thead>
+<tr>
+<th>面板名称</th>
+<th>面板类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLFire集群内存总使用变化图</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire主机内存使用变化图</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点内存使用变化图</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点内存使用率变化图</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点负载倾斜百分比变化图</td>
+<td>折线图</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/node_dynamic_monitor.gif" alt="SQLFire Member Static Monitor"></p>
+<h3 id="SQLFire节点和表关系监控面板">SQLFire节点和表关系监控面板</h3><table>
+<thead>
+<tr>
+<th>面板名称</th>
+<th>面板类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLFire节点表数据构成图</td>
+<td>柱状图</td>
+<td>暂缺</td>
+</tr>
+<tr>
+<td>SQLFire表数据节点承载分布图</td>
+<td>柱状图</td>
+<td>暂缺</td>
+</tr>
+</tbody>
+</table>
+<h3 id="修改monitor-sh脚本向ES索引数据">修改monitor.sh脚本向ES索引数据</h3><p>   修改monitor.sh实现向ES索引数据并重命名为monitor_in_es.sh,在脚本中增加三个配置参数</p>
+<ol>
+<li>ES服务进程主机名</li>
+<li>ES服务进程端口号</li>
+<li>Json数据临时存储目录</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmp_json_data_dir=/app/sqlfire_script/$1/tmp_json_data&#10;readonly es_host=&#34;localhost&#34;&#10;readonly es_port=9200</span><br></pre></td></tr></table></figure>
+<h3 id="SQLFire基于日志监控面板">SQLFire基于日志监控面板</h3><table>
+<thead>
+<tr>
+<th>面板名称</th>
+<th>面板类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLFireLocator连接服务状态图</td>
+<td>饼图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点最近一次状态信息</td>
+<td>列表</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点Error级别日志信息</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点WARNNING级别日志信息</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点SERVERE级别日志信息</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点错误SQL语句信息</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点失败SQL语句信息</td>
+<td>折线图</td>
+<td></td>
+</tr>
+<tr>
+<td>SQLFire节点SELECT语句信息</td>
+<td>折线图</td>
+<td>包括客户端直接请求和节点转发请求</td>
+</tr>
+<tr>
+<td>SQLFire节点DELETE语句信息</td>
+<td>折线图</td>
+<td>包括客户端直接请求和节点转发请求</td>
+</tr>
+<tr>
+<td>SQLFire节点UPDATE语句信息</td>
+<td>折线图</td>
+<td>包括客户端直接请求和节点转发请求</td>
+</tr>
+<tr>
+<td>SQLFire节点直接INSERT语句信息</td>
+<td>折线图</td>
+<td>客户端直接请求</td>
+</tr>
+<tr>
+<td>SQLFire节点直接SELECT语句信息</td>
+<td>折线图</td>
+<td>客户端直接请求</td>
+</tr>
+<tr>
+<td>SQLFire节点直接DELETE语句信息</td>
+<td>折线图</td>
+<td>客户端直接请求</td>
+</tr>
+<tr>
+<td>SQLFire节点直接UPDATE语句信息</td>
+<td>折线图</td>
+<td>客户端直接请求</td>
+</tr>
+</tbody>
+</table>
+<h2 id="在测试集群上搭建测试环境">在测试集群上搭建测试环境</h2><h2 id="参考">参考</h2><p><a href="https://github.com/dongjiaqiang/sqlfire_monitor_scripts.git" target="_blank" rel="external">集成ElasticSearch和Kibana4的SQLFire集群监控项目Github地址</a></p>
 <h2 id="引用">引用</h2><p><a href="http://sqlfire.docs.pivotal.io/userguide/index.html" target="_blank" rel="external">SQLFire User Guide</a><br><a href="http://es.xiaoleilu.com/index.html" target="_blank" rel="external">Elasticsearch 权威指南(中文版)</a><br><a href="https://www.elastic.co/products/elasticsearch/" target="_blank" rel="external">Elasticsearch Office Website</a><br><a href="https://www.elastic.co/guide/en/kibana/current/index.html" target="_blank" rel="external">Kibana4 User Guide</a></p>
 
         
