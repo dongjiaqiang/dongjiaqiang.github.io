@@ -81,6 +81,133 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/11/04/threadLocal/" title="线程封闭与ThreadLocal类" itemprop="url">线程封闭与ThreadLocal类</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Geek Dong" target="_blank" itemprop="author">Geek Dong</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-04T13:56:33.000Z" itemprop="datePublished"> 发表于 2015-11-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="线程封闭">线程封闭</h2><h3 id="概念">概念</h3><p>   所谓线程封闭(Thread Confinement)就是将对象封闭在一个线程中,仅能在该线程中访问这个对象的技术.Java语言和及其核心类库提供了一些机制以帮助程序维护线程封闭性,如局部变量和ThreadLocal类.通过线程封闭可以将非线程安全的对象自动实现为线程安全.</p>
+<h3 id="实现手段">实现手段</h3><ul>
+<li>Ad-hoc线程封闭  由程序实现来维护线程的封闭性</li>
+<li>栈封闭  只有局部变量才能访问对象</li>
+<li>ThreadLocal类  </li>
+</ul>
+<h2 id="ThreadLocal类">ThreadLocal类</h2><p>   其实每个线程与各个ThreadLocal实例关联的值都是维护在每个线程的内部,每个线程都有一个类型为ThreadLocalMap的实例域,这个实例域维护着一个初始大小为16类型为Entry的数组.Entry类是一个键值对类,键为ThreadLocal实例,值为与其关联的值.这些Entry实例通过散列机制存储于这个数组中.线程对ThreadLocal实例的访问在内部便被转换为对线程自己ThreadLocalMap实例域的访问.我接下来首先会介绍ThreadLocal类的用法,然后对ThreadLocalMap的散列机制进行一个描述,其后重点描述获取,设置与移除与ThreadLocal实例关联的值的流程.由于Entry实例中的键是一个弱引用,也就意味着键所引用的ThreadLocal实例在必要时会被垃圾回收.所以对这些过期的Entry进行回收也是必要的.由于获取,设置和移除操作在遇到过期的Entry时会进行回收,所以有必要对各个操作的回收机制进行一个描述.</p>
+<h3 id="ThreadLocal类的用法">ThreadLocal类的用法</h3><pre><code><span class="comment"><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">WorkThread</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Integer&gt; integerThreadLocal;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WorkThread</span><span class="params">(ThreadLocal&lt;Integer&gt; integerThreadLocal)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.integerThreadLocal = integerThreadLocal;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(integerThreadLocal.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"> ThreadLocal&lt;Integer&gt; integerThreadLocal = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;() &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> AtomicInteger atomicInteger=<span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">        <span class="comment">//唯一需要覆盖的方法,用于产生初始值</span></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Integer <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> atomicInteger.getAndIncrement();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> WorkThread(integerThreadLocal)).start();</span><br><span class="line">    <span class="keyword">new</span> Thread(<span class="keyword">new</span> WorkThread(integerThreadLocal)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></span>
+</code></pre><p>   下图便展现了Thread,ThreadLocal,ThreadLocalMap和Entry之间的关系.<br>    <img src="https://s3.amazonaws.com/f.cl.ly/items/1Z1Q1H1k3a2E2I330v3z/threadlocal_one.png" alt="Relations"></p>
+<h3 id="散列机制">散列机制</h3><p>   Entry实例通过散列方式维护在Map中,当散列发生冲突时采用线性探测方式解决冲突(也就是依次向前遍历查找一个空位).在ThreadLocal中存在着这么一个神奇的final静态整型变量0x61c88647,在创建每一个ThreadLocal实例时都会生成一个0x61c88647整数倍的值(hashCode)且在每个实例中这个值都是唯一的,通过hashCode&amp;(length-1)来生成entry实例在数组上的索引值.<br>   Java文档中说明了该方法在2的幂次方大小的数组中进行散列效果非常好.以下是在大小为16数组上的散列效果.</p>
+<table>
+<thead>
+<tr>
+<th>0*hashCode</th>
+<th style="text-align:center">1*hashCode</th>
+<th style="text-align:center">2*hashCode</th>
+<th style="text-align:center">3*hashCode</th>
+<th style="text-align:center">4*hashCode</th>
+<th style="text-align:center">5*hashCode</th>
+<th style="text-align:center">6*hashCode</th>
+<th style="text-align:right">7*hashCode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">14</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">10</td>
+<td style="text-align:right">1</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>8*hashCode</th>
+<th style="text-align:center">9*hashCode</th>
+<th style="text-align:center">10*hashCode</th>
+<th style="text-align:center">11*hashCode</th>
+<th style="text-align:center">12*hashCode</th>
+<th style="text-align:center">13*hashCode</th>
+<th style="text-align:center">14*hashCode</th>
+<th style="text-align:right">15*hashCode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>8</td>
+<td style="text-align:center">15</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">13</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">11</td>
+<td style="text-align:center">2</td>
+<td style="text-align:right">9</td>
+</tr>
+</tbody>
+</table>
+<h3 id="获取值的流程">获取值的流程</h3><p>   获取值的流程对应到ThreadLocal.get方法,这个方法在内部被转变为对线程上的类型为ThreadLocalMap域的访问.这个域在没被访问时是为空的,所以在第一次访问时需要先实例化一个ThreadLocalMap,并调用initialValue方法创建一个初始值.并使用初始值构造一个entry来初始化这个域并返回结果.如果Map实例域存在,则计算索引值index=hashCode&amp;(length-1),并从索引值位置开始依次向前遍历直到遇到null引用.在这个遍历过程中,如果遇到entry实例的键值为目标threadLocal实例,则返回结果,遍历过程结束.如果遇到过期引用,则需要调用expungeStaleEntry方法进行处理否则将index值向前移动一次.如果在遇到null引用后还是未找到值,说明该threadLocal所关联的值还未存储于该Map上,则要调用set方法进行设置,该方法后续会介绍.</p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//向前遍历直到遇到null引用</span></span><br><span class="line"><span class="keyword">while</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">           ThreadLocal k = e.get();</span><br><span class="line">           <span class="comment">//如果找到,则返回对应的值</span></span><br><span class="line">           <span class="keyword">if</span> (k == key)</span><br><span class="line">               <span class="keyword">return</span> e;</span><br><span class="line">           <span class="keyword">if</span> (k == <span class="keyword">null</span>)</span><br><span class="line">               <span class="comment">//如果遇到过期引用,则调用该方法</span></span><br><span class="line">               expungeStaleEntry(i);</span><br><span class="line">           <span class="keyword">else</span></span><br><span class="line">               <span class="comment">//否则将i值向前递增</span></span><br><span class="line">               i = nextIndex(i, len);</span><br><span class="line">           e = tab[i];</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>   下图展现了获取值的流程<br>   <img src="https://s3.amazonaws.com/f.cl.ly/items/0r3H3E1v290y3a2z1z3Z/set_produce.png" alt="Get Produce"></p>
+<p>   由于set方法遇到过期引用会调用expungeStaleEntry方法,所以这里有必要分析一下该方法的处理机制.expungeStaleEntry方法传入的参数是一个entry实例的索引位置(并且应该是一个过期的entry),该方法也是从该索引位置开始一直向前遍历直到遇到null位置.在这个遍历过程中,该方法将清除过期引用,对未过期的entry进行重新散列并返回第一次遇到null的索引位置.</p>
+<p>   下图展现了expungeStaleEntry的工作机制<br>   <img src="https://s3.amazonaws.com/f.cl.ly/items/090M0D0S1A3C2e0w0L38/threadlocal_two.png" alt="expungeStaleEntry"></p>
+<h3 id="设置值的流程">设置值的流程</h3><p>   设置值的流程对应到ThreadLocal.set方法.该方法与get方法一样,在调用时如果线程的类型为ThreadLocalMap域为null同样会对其进行初始化.如果该域已经初始化就调用map.set方法设置映射关系.跟get方法一样需要计算索引值index=hashCode&amp;(length-1),并从索引位置向前遍历,直到遇到null位置.在这期间如果遇到entry实例的键值为目标threadLocal实例,则更新其关联的值并返回.如果遇到过期引用则调用replaceStaleEntry方法并返回.如果遇到null位置还是未发现目标entry或过期引用,说明目标threadLocal实例未在map中关联值,则在该null位置创建一个新的entry实例.之后调用cleanSomeSlot方法如果返回false且map中entry实例数量超过阈值(阈值设置为map长度的三分之二)则调用rehash方法对map进行扩展.</p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//向前遍历直到遇到null引用</span></span><br><span class="line"> <span class="keyword">for</span> (Entry e = tab[i];</span><br><span class="line">             e != <span class="keyword">null</span>;</span><br><span class="line">             e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">            <span class="comment">//获取Entry的键</span></span><br><span class="line">            ThreadLocal k = e.get();</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//如果键的引用的就是目标threadLocal实例就更新其关联的值</span></span><br><span class="line">            <span class="keyword">if</span> (k == key) &#123;</span><br><span class="line">                e.value = value;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">//如果是过期引用则调用replaceStaleEntry方法</span></span><br><span class="line">            <span class="keyword">if</span> (k == <span class="keyword">null</span>) &#123;</span><br><span class="line">                replaceStaleEntry(key, value, i);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果遇到null引用后还是未找到目标threadLocal实例说明该关系未存储于map中,创建一个新的entry实例关联到这个位置.</span></span><br><span class="line">        tab[i] = <span class="keyword">new</span> Entry(key, value);</span><br><span class="line">        <span class="keyword">int</span> sz = ++size;</span><br><span class="line">        <span class="comment">//如果调用cleanSomeSlot方法返回false且map中的实例数超过threshold(该值为map长度的3/2)就调用rehash方法.</span></span><br><span class="line">        <span class="keyword">if</span> (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">            rehash();</span><br></pre></td></tr></table></figure>
+<p>  下图展现了设置值的流程<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/set_produce_1.png" alt="Set Produce"></p>
+<p>  跟set方法在遇到过期引用时会调用replaceStaleEntry方法,而该方法又依赖于cleanSomeSlot方法,所以这里先分析cleanSomeSlot方法.cleanSomeSlot方法需要两个int类型的参数,一个为index,方法将从index位置开始向前遍历寻找过期引用,一个为n,方法在遍历过程中如果未遇见过期引用将遍历<img src="http://www.forkosh.com/mathtex.cgi?{log}_2n">个引用后结束并返回false.如果遇见过期引用,则从该位置调用explungeStaleEntry方法并从返回的位置继续重新遍历<img src="http://www.forkosh.com/mathtex.cgi?{log}_2n">个引用,如果在此期间没有遇到过期引用则结束并返回true.</p>
+<p>  下图展现了cleanSomeSlot方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/cleanSomeSlot.png" alt="cleanSomeSlot"></p>
+<p>  介绍完cleanSomeSlot方法后在介绍一下replaceStaleEntry方法的工作机制,这是设置值过程如果遇到过期引用会调用的方法.</p>
+<p>  下图展现了replaceStaleEntry方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/replaceStaleEntry.png" alt="replaceStaleEntry"></p>
+<p>  map中设置保存的entry实例数的阈值为三分之二大小的map长度,如果该entry实例数量超过阈值将调用rehash方法对map进行扩展.<br>  在rehash运行流程中,将首先遍历这个map,对每个entry都调用expungeStaleEntry方法,以清除全部的过期引用.如果运行结束entry实例还是超过了四分之三大小的阈值.则对map进行扩展.扩展过程是创建一个新的map实例,这个新的map实例的大小为旧的map实例大小的两倍.并将旧map实例中所有的entry实例重新映射到新的map实例上,并设置新的阈值.</p>
+<p>  下图展现了rehash方法的工作机制<br>  <img src="http://7xonn1.com1.z0.glb.clouddn.com/rehash.png?imageView/2/w/619/q/90" alt="rehash"></p>
+<h3 id="移除值的流程">移除值的流程</h3><p>   移除值的流程对应到ThreadLocal.remove方法,该方法将移除线程内部threadLocalMap域中保存的该ThreadLocal实例与其映射的值的对应关系.</p>
+<p>   下图展现了移除值的流程<br>   <img src="http://7xonn1.com1.z0.glb.clouddn.com/remove.png?imageView/2/w/619/q/90" alt="Remove Produce"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/10/31/paxos/" title="Paxos协议与分布式一致性" itemprop="url">Paxos协议与分布式一致性</a>
   </h1>
   <p class="article-author">By
