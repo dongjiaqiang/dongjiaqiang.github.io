@@ -34,9 +34,8 @@
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/java动态代理.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/hadoop-rpc-test.gif">
-<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/Hadoop%20RPC.jpg">
-<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/Hadoop%20RPC%202.jpg">
-<meta property="og:updated_time" content="2015-12-26T07:53:16.000Z">
+<meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/hadoop_rpc.jpg">
+<meta property="og:updated_time" content="2015-12-27T05:44:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop源码阅读之Hadoop RPC框架解析(基于Hadoop 1.0.0版本)">
 <meta name="twitter:description" content="Hadoop RPC框架概述代理模式与Java动态代理在了解Java动态代理之前,先了解一下代理模式
@@ -183,8 +182,7 @@
 <p>第四步:构造RPC Client(RPC客户端),并发送RPC请求.使用静态方法getProxy()构造客户端代理对象,直接通过代理对象调用远程端方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ClientProtocol proxy=(ClientProtocol)RPC.getProxy(ClientProtocol.class, ClientProtocol.versionID,<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>,<span class="number">1528</span>), <span class="keyword">new</span> Configuration());</span><br><span class="line">proxy.addNewPersonInfo(<span class="keyword">new</span> PersonWritable(<span class="string">"Dong"</span>,<span class="number">21</span>,<span class="string">"Programmer"</span>));</span><br><span class="line">System.out.println(proxy.getPersonInfo(<span class="string">"Dong"</span>));</span><br></pre></td></tr></table></figure>
 <p>如下的动态图展示Hadoop RPC的使用,我们在两个IDE中分别启动服务端和客户端,其中服务端对象维护着一个map对象,在另一个IDE中启动了两个客户端去访问这个服务端对象,可以看到,客户端可以正常访问服务端对象,并且在客户端访问退出后,服务端抛出了远程主机关闭的异常.<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/hadoop-rpc-test.gif" alt="Use Hadoop RPC"></p>
-<h2 id="剖析Hadoop_RPC框架实现机制">剖析Hadoop RPC框架实现机制</h2><h3 id="客户端入口">客户端入口</h3><p><img src="http://7xonn1.com1.z0.glb.clouddn.com/Hadoop%20RPC.jpg" alt="Hadoop RPC"></p>
-<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/Hadoop%20RPC%202.jpg" alt="Hadoop RPC"></p>
+<h2 id="剖析Hadoop_RPC框架实现机制">剖析Hadoop RPC框架实现机制</h2><h3 id="客户端入口">客户端入口</h3><p><img src="http://7xonn1.com1.z0.glb.clouddn.com/hadoop_rpc.jpg" alt="Hadoop RPC"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
