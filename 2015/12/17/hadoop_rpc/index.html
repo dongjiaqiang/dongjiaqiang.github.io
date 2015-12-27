@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/java动态代理.png?imageView/2/w/519/q/80">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/hadoop-rpc-test.gif">
 <meta property="og:image" content="http://7xonn1.com1.z0.glb.clouddn.com/hadoop_rpc.jpg">
-<meta property="og:updated_time" content="2015-12-27T05:44:31.000Z">
+<meta property="og:updated_time" content="2015-12-27T06:35:53.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hadoop源码阅读之Hadoop RPC框架解析(基于Hadoop 1.0.0版本)">
 <meta name="twitter:description" content="Hadoop RPC框架概述代理模式与Java动态代理在了解Java动态代理之前,先了解一下代理模式
@@ -182,7 +182,34 @@
 <p>第四步:构造RPC Client(RPC客户端),并发送RPC请求.使用静态方法getProxy()构造客户端代理对象,直接通过代理对象调用远程端方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ClientProtocol proxy=(ClientProtocol)RPC.getProxy(ClientProtocol.class, ClientProtocol.versionID,<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>,<span class="number">1528</span>), <span class="keyword">new</span> Configuration());</span><br><span class="line">proxy.addNewPersonInfo(<span class="keyword">new</span> PersonWritable(<span class="string">"Dong"</span>,<span class="number">21</span>,<span class="string">"Programmer"</span>));</span><br><span class="line">System.out.println(proxy.getPersonInfo(<span class="string">"Dong"</span>));</span><br></pre></td></tr></table></figure>
 <p>如下的动态图展示Hadoop RPC的使用,我们在两个IDE中分别启动服务端和客户端,其中服务端对象维护着一个map对象,在另一个IDE中启动了两个客户端去访问这个服务端对象,可以看到,客户端可以正常访问服务端对象,并且在客户端访问退出后,服务端抛出了远程主机关闭的异常.<br><img src="http://7xonn1.com1.z0.glb.clouddn.com/hadoop-rpc-test.gif" alt="Use Hadoop RPC"></p>
-<h2 id="剖析Hadoop_RPC框架实现机制">剖析Hadoop RPC框架实现机制</h2><h3 id="客户端入口">客户端入口</h3><p><img src="http://7xonn1.com1.z0.glb.clouddn.com/hadoop_rpc.jpg" alt="Hadoop RPC"></p>
+<h2 id="剖析Hadoop_RPC框架实现机制">剖析Hadoop RPC框架实现机制</h2><h3 id="客户端入口">客户端入口</h3><p>可以从下图看到,客户端入口的方法是RPC.getProxy这个静态方法,该方法接受4个参数分别是:</p>
+<ul>
+<li>Class&lt;? extends VersionedProtocol&gt; protocol 客户端代理对象和服务端的服务类对象都要实现的接口的类对象,也就是客户端代理与服务端之间的通信协议</li>
+<li>long clientVersion  客户端代理对象实现该协议的版本号,客户端代理和服务类版本号需要一致,不然将抛出异常并结束调用</li>
+<li>InetSocketAddress addr 服务器地址包含了IP地址和端口号</li>
+<li>Configuration conf 配置参数信息</li>
+</ul>
+<p>并且可选两个参数:</p>
+<ul>
+<li>SocketFactory factory 套接字工厂,如果创建客户端代理过程中没有特别指定该参数,创建的所有客户端代理都将使用同一个工厂实例创建套接字</li>
+<li>int rpcTimeOut rpc超时时间,底层套接字通信设置的参数,默认为0</li>
+</ul>
+<p>调用该方法后将使用Java动态代理为客户端代理创建一个Java动态代理对象,从下图可以看出,实际处理客户端代理请求的对象是RPC.Invoker类,这个类实现了InvocationHandler接口,并实现了invoke方法,在该方法中接受客户端代理请求并进行响应.</p>
+<p>Invoker的构造函数接受了创建客户端代理时传入的所有参数,并且可以看到有一个UserGroupInformation的参数,由于不考虑在通信过程中的安全认证和身份信息方面的问题,所以这个参数为null.Invoker接受这些参数主要用于构建两个实例,一个是ConnectionId,这个实例主要是在Invoker内部维护对服务器的连接信息,每个客户端代理都会维护一个ConnectionId实例,除了该实例外,每个客户端代理还需要在Invoker对象中维护一个Client对象,这个对象是使用套接字工厂实例从RPC.CLIENTS这个全局静态实例获取的,也就是说在默认情况下所有的客户端代理对象将引用同一个客户端对象.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Invoker类实现了InvocationHandler接口,将在invoke方法中响应客户端代理的请求</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Invoker</span> <span class="keyword">implements</span> <span class="title">InvocationHandler</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> ConnectionId remoteId; <span class="comment">//这个类包含了与服务器端进行通信的相关参数</span></span><br><span class="line">        <span class="keyword">private</span> Client client; <span class="comment">//客户端对象</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">boolean</span> isClosed = <span class="keyword">false</span>; <span class="comment">//是否关闭客户端代理的请求服务</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Invoker</span><span class="params">(Class&lt;? extends VersionedProtocol&gt; protocol, InetSocketAddress address, UserGroupInformation ticket, Configuration conf, SocketFactory factory, <span class="keyword">int</span> rpcTimeout)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.remoteId = ConnectionId.getConnectionId(address, protocol, ticket, rpcTimeout, conf);</span><br><span class="line">            <span class="keyword">this</span>.client = RPC.CLIENTS.getClient(conf, factory);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>ConnectId类是Client类的一个静态内部类,这个类保存了与服务器进行连接的所需要的参数,包括</p>
+<ul>
+<li>InetAddress address 服务器地址,包括了IP和端口号,是连接服务器所需要的最基本的信息</li>
+<li>Class&lt;?&gt; protocol 协议的类对象</li>
+<li>rpcTimeOut rpc超时时间 默认为0</li>
+<li>maxIdleTime 最大空闲时间 默认为 1000 从配置参数获取</li>
+<li>maxRetires 最大重试时间 默认为10 从配置参数获取</li>
+<li>boolean tcpNodelay 这是套接字参数,见上文从配置参数获取 默认为true</li>
+<li>int pingInterval ping间隔 默认为0 从配置参数获取</li>
+</ul>
+<p>在构造过程中将调用RPC.CLIENTS.getClient方法获取一个客户端对象.CLIENT静态实例是一个ClientCache类对象,由于客户端代理会竞争访问这个实例,所以这个类是线程安全类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> </span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientCache</span> </span>&#123;</span><br><span class="line">     <span class="comment">//其内部维护了套接字工厂实例和客户端对象一一对应的关系</span></span><br><span class="line">     <span class="keyword">private</span> Map&lt;SocketFactory, Client&gt; clients;</span><br><span class="line">     <span class="function"><span class="keyword">private</span> <span class="title">ClientCache</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">this</span>.clients = <span class="keyword">new</span> HashMap();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="comment">//获取客户端对象的方法是一个静态方法,如果传入了套接字工厂实例对应的客户端对象存在,则直接返回并将客户端对象的引用值增一否则创建对应的工厂实例的客户端对象,并进行保存.</span></span><br><span class="line">     <span class="function"><span class="keyword">private</span> <span class="keyword">synchronized</span> Client <span class="title">getClient</span><span class="params">(Configuration conf, SocketFactory factory)</span> </span>&#123;</span><br><span class="line">         Client client = (Client)<span class="keyword">this</span>.clients.get(factory);</span><br><span class="line">         <span class="keyword">if</span>(client == <span class="keyword">null</span>) &#123;</span><br><span class="line">             client = <span class="keyword">new</span> Client(ObjectWritable.class, conf, factory);</span><br><span class="line">             <span class="keyword">this</span>.clients.put(factory, client);</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             client.incCount();</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">return</span> client;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://7xonn1.com1.z0.glb.clouddn.com/hadoop_rpc.jpg" alt="Hadoop RPC"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
