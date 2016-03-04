@@ -1,0 +1,537 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Apache Flume源码解析之启动过程分析 | Dong&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="rookiedong">
+    
+
+    
+    <meta name="description" content="命令行参数解析 Flume-NG启动过程在org.apache.flume.node.Application类中实现,首先执行的是命令行参数的解析,这里使用了Apache Commons CLI组件实现命令行参数的解析
+Flume-NG 命令行参数设计
+
+
+参数名
+缩略名
+参数值数量
+是否为必要参数
+描述
+
+
+
+
+name
+n
+1
+是
+agent名字
+
+
+conf-file
+f
+1
+如果没有zkC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache Flume源码解析之启动过程分析">
+<meta property="og:url" content="http://www.gohell.com.cn/2016/03/04/flume_source_cod_analyisis_start/index.html">
+<meta property="og:site_name" content="Dong's Blog">
+<meta property="og:description" content="命令行参数解析 Flume-NG启动过程在org.apache.flume.node.Application类中实现,首先执行的是命令行参数的解析,这里使用了Apache Commons CLI组件实现命令行参数的解析
+Flume-NG 命令行参数设计
+
+
+参数名
+缩略名
+参数值数量
+是否为必要参数
+描述
+
+
+
+
+name
+n
+1
+是
+agent名字
+
+
+conf-file
+f
+1
+如果没有zkC">
+<meta property="og:updated_time" content="2016-03-04T09:29:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Apache Flume源码解析之启动过程分析">
+<meta name="twitter:description" content="命令行参数解析 Flume-NG启动过程在org.apache.flume.node.Application类中实现,首先执行的是命令行参数的解析,这里使用了Apache Commons CLI组件实现命令行参数的解析
+Flume-NG 命令行参数设计
+
+
+参数名
+缩略名
+参数值数量
+是否为必要参数
+描述
+
+
+
+
+name
+n
+1
+是
+agent名字
+
+
+conf-file
+f
+1
+如果没有zkC">
+
+    
+    <link rel="alternative" href="/atom.xml" title="Dong&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Dong&#39;s Blog" title="Dong&#39;s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Dong&#39;s Blog">Dong&#39;s Blog</a></h1>
+				<h2 class="blog-motto">less is more</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:www.gohell.com.cn">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/04/flume_source_cod_analyisis_start/" title="Apache Flume源码解析之启动过程分析" itemprop="url">Apache Flume源码解析之启动过程分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="rookiedong" target="_blank" itemprop="author">rookiedong</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-04T08:46:14.000Z" itemprop="datePublished"> 发表于 2016-03-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#命令行参数解析"><span class="toc-number">1.</span> <span class="toc-text">命令行参数解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Flume-NG_命令行参数设计"><span class="toc-number">1.1.</span> <span class="toc-text">Flume-NG 命令行参数设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用Apache_Commons_CLI组件解析Flume-NG命令行参数"><span class="toc-number">1.2.</span> <span class="toc-text">使用Apache Commons CLI组件解析Flume-NG命令行参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#命令行运行流程图"><span class="toc-number">1.3.</span> <span class="toc-text">命令行运行流程图</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h3 id="命令行参数解析">命令行参数解析</h3><p> Flume-NG启动过程在org.apache.flume.node.Application类中实现,首先执行的是命令行参数的解析,这里使用了Apache Commons CLI组件实现命令行参数的解析</p>
+<h4 id="Flume-NG_命令行参数设计">Flume-NG 命令行参数设计</h4><table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>缩略名</th>
+<th>参数值数量</th>
+<th>是否为必要参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>n</td>
+<td>1</td>
+<td>是</td>
+<td>agent名字</td>
+</tr>
+<tr>
+<td>conf-file</td>
+<td>f</td>
+<td>1</td>
+<td>如果没有zkConnString则必须</td>
+<td>配置文件路径</td>
+</tr>
+<tr>
+<td>zkConnString</td>
+<td>z</td>
+<td>1</td>
+<td>否</td>
+<td>zookeeper连接字符串</td>
+</tr>
+<tr>
+<td>zkBasePath</td>
+<td>p</td>
+<td>1</td>
+<td>否</td>
+<td>agent配置信息在zookeeper的根路径</td>
+</tr>
+<tr>
+<td>no-reload-conf</td>
+<td></td>
+<td>0</td>
+<td>否</td>
+<td>如果配置文件发生变更不要动态加载</td>
+</tr>
+<tr>
+<td>help</td>
+<td>h</td>
+<td>0</td>
+<td>否</td>
+<td>显示帮助信息</td>
+</tr>
+</tbody>
+</table>
+<h4 id="使用Apache_Commons_CLI组件解析Flume-NG命令行参数">使用Apache Commons CLI组件解析Flume-NG命令行参数</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义阶段</span></span><br><span class="line"><span class="comment">//Options类是Option实例的容器 其描述了一行命令行所有可能的命令行选项</span></span><br><span class="line">Options options = <span class="keyword">new</span> Options();</span><br><span class="line"><span class="comment">//Option类描述了单个命令行选项 第一个参数描述option的单字符名字 第二个参数描述option的完整名字 第三个参数表示option是否需要参数值 最后一个参数给出该option的描述</span></span><br><span class="line">Option option = <span class="keyword">new</span> Option(<span class="string">"n"</span>, <span class="string">"name"</span>, <span class="keyword">true</span>, <span class="string">"the name of this agent"</span>);</span><br><span class="line"><span class="comment">//设置该option是否是必要参数</span></span><br><span class="line">option.setRequired(<span class="keyword">true</span>);</span><br><span class="line"><span class="comment">//将该option实例加入options面板</span></span><br><span class="line">options.addOption(option);</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">//解析阶段</span></span><br><span class="line"><span class="comment">//使用CommandLineParserCommandLineParser类中定义的parse方法将用CLI定义阶段中产生的Options实例和一组字符串作为输入并返回解析后生成的CommandLine</span></span><br><span class="line">CommandLineParser parser = <span class="keyword">new</span> GnuParser();</span><br><span class="line"><span class="comment">//解析最终结果创建CommandLine实例</span></span><br><span class="line">CommandLine commandLine = parser.parse(options, args);</span><br><span class="line"></span><br><span class="line"><span class="comment">//判断命令行是否有参数h 如果有显示命令行帮助信息并退出</span></span><br><span class="line"><span class="keyword">if</span> (commandLine.hasOption(<span class="string">'h'</span>)) &#123;</span><br><span class="line">    <span class="keyword">new</span> HelpFormatter().printHelp(<span class="string">"flume-ng agent"</span>, options, <span class="keyword">true</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//询问阶段</span></span><br><span class="line"><span class="comment">//CommandLine中的访问方法为用户代码提供了CLI的询问能力</span></span><br><span class="line">String agentName = commandLine.getOptionValue(<span class="string">'n'</span>);</span><br><span class="line"><span class="keyword">boolean</span> reload = !commandLine.hasOption(<span class="string">"no-reload-conf"</span>);</span><br><span class="line"><span class="keyword">if</span> (commandLine.hasOption(<span class="string">'z'</span>) || commandLine.hasOption(<span class="string">"zkConnString"</span>)) &#123;</span><br><span class="line">        isZkConfigured = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="命令行运行流程图">命令行运行流程图</h4>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://www.gohell.com.cn/2016/03/04/flume_source_cod_analyisis_start/" data-title="Apache Flume源码解析之启动过程分析 | Dong&#39;s Blog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/01/24/synchronizer/"  title="同步器">
+ <strong>下一篇：</strong><br/> 
+ <span>同步器
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#命令行参数解析"><span class="toc-number">1.</span> <span class="toc-text">命令行参数解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Flume-NG_命令行参数设计"><span class="toc-number">1.1.</span> <span class="toc-text">Flume-NG 命令行参数设计</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用Apache_Commons_CLI组件解析Flume-NG命令行参数"><span class="toc-number">1.2.</span> <span class="toc-text">使用Apache Commons CLI组件解析Flume-NG命令行参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#命令行运行流程图"><span class="toc-number">1.3.</span> <span class="toc-text">命令行运行流程图</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=null&verifier=wwewe&dpc=1"></iframe>
+</div>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/21212" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2016 
+		
+		<a href="/about" target="_blank" title="rookiedong">rookiedong</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fe6d1f421bbc9962127a50488f9ed37d1' type='text/javascript'%3E%3C/script%3E"));
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
